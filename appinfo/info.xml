@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<info>
+    <id>mediametadata</id>
+    <name>Media Metadata</name>
+    <description>An ownCloud Application which provides CRUD access to the metadata stored in images</description>
+    <licence>AGPL</licence>
+    <author>Jalpreet Singh Nanda (:imjalpreet)</author>
+    <version>0.0.0</version>
+    <namespace>MediaMetadata</namespace>
+    <category>productivity</category>
+    <dependencies>
+        <owncloud min-version="9.0" />
+    </dependencies>
+</info>
