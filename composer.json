@@ -1,0 +1,29 @@
+{
+  "name": "interfasys/mediametadata",
+  "type": "project",
+  "description": "An ownCloud Application which provides CRUD access to the metadata stored in images",
+  "license": "AGPL-3.0",
+  "homepage": "https://github.com/interfasys/mediametadata",
+  "authors": [
+    {
+      "name": "Jalpreet Singh Nanda (:imjalpreet)",
+      "email": "jalpreetnanda@gmail.com",
+      "role": "Developer",
+      "homepage": "https://github.com/imjalpreet"
+    }
+  ],
+  "support": {
+    "issues": "https://github.com/interfasys/mediametadata/issues",
+    "wiki": "https://github.com/interfasys/mediametadata/wiki",
+    "source": "https://github.com/interfasys/mediametadata"
+  },
+  "require-dev": {
+    "codeception/codeception": "2.1.*",
+    "codeception/phpbuiltinserver": "*",
+    "codeception/c3": "2.*",
+    "flow/jsonpath": "^0.3.1",
+    "phpdocumentor/phpdocumentor": "^2.8",
+    "jakub-onderka/php-parallel-lint": "0.*",
+    "jakub-onderka/php-console-highlighter": "0.*"
+  }
+}
