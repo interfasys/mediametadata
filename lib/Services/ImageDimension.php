@@ -13,22 +13,9 @@
 namespace OCA\MediaMetadata\Services;
 
 use OCP\AppFramework\Db\Entity;
-use JsonSerializable;
 
-class ImageDimension extends Entity implements JsonSerializable {
+class ImageDimension extends Entity {
 	protected $imageId;
 	protected $imageHeight;
 	protected $imageWidth;
-
-	/**
-	 * @return array
-	 */
-	public function jsonSerialize() {
-		return [
-			'id' => $this->id,
-			'imageId' => $this->imageId,
-			'imageHeight' => $this->imageHeight,
-			'imageWidth' => $this->imageWidth
-		];
-	}
 }
