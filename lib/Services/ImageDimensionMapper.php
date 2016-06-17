@@ -23,6 +23,8 @@ class ImageDimensionMapper extends Mapper {
 		parent::__construct($database, 'mediametadata_image_size', '\OCA\MediaMetadata\Services\ImageDimension');
 	}
 
+
+	//TODO: This method is not being used right now
 	/**
 	 * @param $imageID
 	 * @return \OCP\AppFramework\Db\Entity
