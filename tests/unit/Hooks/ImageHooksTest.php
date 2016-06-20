@@ -148,13 +148,13 @@ class ImageHooksTest extends TestCase {
 		$this->logger->log('debug', 'Test Image Height: '.$imageHeight, array('app' => 'MediaMetadata'));
 		$this->logger->log('debug', 'Test Image Width: '.$imageWidth, array('app' => 'MediaMetadata'));
 
-		$this->imageDimension->expects($this->any())
+		$this->imageDimension->expects($this->once())
 			->method('setImageId')
 			->with($jpgFile->getId());
-		$this->imageDimension->expects($this->any())
+		$this->imageDimension->expects($this->once())
 			->method('setImageHeight')
 			->with($imageHeight);
-		$this->imageDimension->expects($this->any())
+		$this->imageDimension->expects($this->once())
 			->method('setImageWidth')
 			->with($imageWidth);
 
@@ -203,7 +203,7 @@ class ImageHooksTest extends TestCase {
 	 * @param $dimensions
 	 */
 	protected function mockGetImageSize($mockClass, $path, $dimensions) {
-		$mockClass->expects($this->any())
+		$mockClass->expects($this->once())
 			->method('getimagesize')
 			->with($path)
 			->willReturn($dimensions);
