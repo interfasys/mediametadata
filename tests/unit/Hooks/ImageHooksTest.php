@@ -12,6 +12,7 @@
 namespace OCA\MediaMetadata\Hooks;
 
 
+use OCA\MediaMetadata\Services\ImageDimension;
 use OCA\MediaMetadata\Services\ImageDimensionMapper;
 use OCA\MediaMetadata\Tests\TestCase;
 use OCP\ILogger;
@@ -45,6 +46,10 @@ class ImageHooksTest extends TestCase {
 	 * @var \PHPUnit_Framework_MockObject_MockObject|\OCP\IDb
 	 */
 	protected $db;
+	/**
+	 * @var \PHPUnit_Framework_MockObject_MockObject|\OCA\MediaMetadata\Services\ImageDimension
+	 */
+	protected $imageDimension;
 
 	protected function setUp() {
 		parent::setUp();
@@ -61,15 +66,20 @@ class ImageHooksTest extends TestCase {
 		$this->db = $this->getMockBuilder('\OCP\IDb')
 			->disableOriginalConstructor()
 			->getMock();
+		$this->imageDimension = $this->getImageDimension();
 	}
 
 	/**
-	 * @return ImageDimensionMapper
+	 * @return object|\PHPUnit_Framework_MockObject_MockObject
 	 */
 	protected function getImageDimensionMapper() {
-		return new ImageDimensionMapper(
+		/*return new ImageDimensionMapper(
 			$this->db
-		);
+		);*/
+
+		return $this->getMockBuilder('OCA\MediaMetadata\Services\ImageDimensionMapper')
+			->setConstructorArgs($this->db)
+			->getMock();
 
 		/*
 		 * Another Method
@@ -80,6 +90,17 @@ class ImageHooksTest extends TestCase {
 		 *     $container->query('ServerContainer')->getDb()
 		 * );
 		 */
+	}
+
+	/**
+	 * @return object|\PHPUnit_Framework_MockObject_MockObject
+	 */
+	protected function getImageDimension() {
+		//return new ImageDimension();
+
+		return $this->getMockBuilder('OCA\MediaMetadata\Services\ImageDimension')
+			->disableOriginalConstructor()
+			->getMock();
 	}
 
 	/**
@@ -109,7 +130,9 @@ class ImageHooksTest extends TestCase {
 	}
 
 	protected function testImageHooks() {
-		$imageHooks = $this->getImageHooks();
+		$imageHooks = $this->getImageHooks([
+			'post_create',
+		]);
 
 		$location = 'testFolder/test.jpg';
 		$fileId = 260495;
@@ -125,13 +148,13 @@ class ImageHooksTest extends TestCase {
 		$this->logger->log('debug', 'Test Image Height: '.$imageHeight, array('app' => 'MediaMetadata'));
 		$this->logger->log('debug', 'Test Image Width: '.$imageWidth, array('app' => 'MediaMetadata'));
 
-		$this->mapper->expects($this->any())
+		$this->imageDimension->expects($this->any())
 			->method('setImageId')
 			->with($jpgFile->getId());
-		$this->mapper->expects($this->any())
+		$this->imageDimension->expects($this->any())
 			->method('setImageHeight')
 			->with($imageHeight);
-		$this->mapper->expects($this->any())
+		$this->imageDimension->expects($this->any())
 			->method('setImageWidth')
 			->with($imageWidth);
 
