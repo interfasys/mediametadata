@@ -12,7 +12,12 @@
 namespace OCA\MediaMetadata\Hooks;
 
 
+use OCA\MediaMetadata\Services\ImageDimensionMapper;
 use OCA\MediaMetadata\Tests\TestCase;
+use OCP\ILogger;
+use OCP\IDb;
+use OCP\Files\File;
+use OCP\Files\Folder;
 
 /**
  * Class ImageHooksTest
@@ -32,6 +37,14 @@ class ImageHooksTest extends TestCase {
 	 * @var \PHPUnit_Framework_MockObject_MockObject|\OCA\MediaMetadata\Services\ImageDimensionMapper
 	 */
 	protected $mapper;
+	/**
+	 * @var ILogger
+	 */
+	protected $logger;
+	/**
+	 * @var \PHPUnit_Framework_MockObject_MockObject|\OCP\IDb
+	 */
+	protected $db;
 
 	protected function setUp() {
 		parent::setUp();
@@ -41,13 +54,37 @@ class ImageHooksTest extends TestCase {
 		$this->root = $this->getMockBuilder('OC\Files\Node\Root')
 			->disableOriginalConstructor()
 			->getMock();
-		$this->mapper = $this->getMockBuilder('OCA\MediaMetadata\Services\ImageDimensionMapper')
+		$this->mapper = $this->getImageDimensionMapper();
+		$this->logger = $this->getMockBuilder('\OCP\ILogger')
+			->disableOriginalConstructor()
+			->getMock();
+		$this->db = $this->getMockBuilder('\OCP\IDb')
 			->disableOriginalConstructor()
 			->getMock();
 	}
 
 	/**
+	 * @return ImageDimensionMapper
+	 */
+	protected function getImageDimensionMapper() {
+		return new ImageDimensionMapper(
+			$this->db
+		);
+
+		/*
+		 * Another Method
+		 * $app = new \OCA\MediaMetadata\AppInfo\Application();
+		 * $container = $app->getContainer();
+		 *
+		 * return new ImageDimensionMapper(
+		 *     $container->query('ServerContainer')->getDb()
+		 * );
+		 */
+	}
+
+	/**
 	 * @param array $mockedMethods
+	 * @return object|ImageHooks|\PHPUnit_Framework_MockObject_MockObject
 	 */
 	protected function getImageHooks(array $mockedMethods = []) {
 		$app = new \OCA\MediaMetadata\AppInfo\Application();
@@ -71,5 +108,81 @@ class ImageHooksTest extends TestCase {
 		}
 	}
 
+	protected function testImageHooks() {
+		$imageHooks = $this->getImageHooks();
 
+		$location = 'testFolder/test.jpg';
+		$fileId = 260495;
+		$jpgFile = $this->mockJpgFile($location, $fileId);
+
+		$imageWidth = 100;
+		$imageHeight = 100;
+		$dimensions = array($imageWidth, $imageHeight);
+
+		$this->mockGetImageSize($imageHooks, $location, $dimensions);
+
+		$this->logger->log('debug', 'Test Image Path: '.$location, array('app' => 'MediaMetadata'));
+		$this->logger->log('debug', 'Test Image Height: '.$imageHeight, array('app' => 'MediaMetadata'));
+		$this->logger->log('debug', 'Test Image Width: '.$imageWidth, array('app' => 'MediaMetadata'));
+
+		$this->mapper->expects($this->any())
+			->method('setImageId')
+			->with($jpgFile->getId());
+		$this->mapper->expects($this->any())
+			->method('setImageHeight')
+			->with($imageHeight);
+		$this->mapper->expects($this->any())
+			->method('setImageWidth')
+			->with($imageWidth);
+
+		//TODO: Mock Mapper->insert
+
+	}
+
+	/**
+	 * @return object|\PHPUnit_Framework_MockObject_MockObject
+	 */
+	protected function mockFile($fileId) {
+		$file = $this->getMockBuilder('OCP\Files\File')
+			->disableOriginalConstructor()
+			->getMock();
+
+		$file->method('getId')
+			->willReturn($fileId);
+
+		return $file;
+	}
+
+	/**
+	 * @param $path
+	 * @return object|\PHPUnit_Framework_MockObject_MockObject
+	 */
+	protected function mockJpgFile($path, $fileId) {
+		$file = $this->mockFile($fileId);
+
+		$this->mockJpgFileMethods($file, $path);
+
+		return $file;
+	}
+
+	/**
+	 * @param $node
+	 * @param $path
+	 */
+	protected function mockJpgFileMethods($node, $path) {
+		$node->method('getPath')
+			 ->willReturn($path);
+	}
+
+	/**
+	 * @param $mockClass
+	 * @param $path
+	 * @param $dimensions
+	 */
+	protected function mockGetImageSize($mockClass, $path, $dimensions) {
+		$mockClass->expects($this->any())
+			->method('getimagesize')
+			->with($path)
+			->willReturn($dimensions);
+	}
 }
