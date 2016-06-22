@@ -54,85 +54,22 @@ class ImageHooksTest extends TestCase {
 	protected function setUp() {
 		parent::setUp();
 
-		$this->imagehooks = $this->getImageHooks();
-
 		$this->root = $this->getMockBuilder('OC\Files\Node\Root')
 			->disableOriginalConstructor()
 			->getMock();
-		$this->mapper = $this->getImageDimensionMapper();
+		$this->mapper = $this->mockImageDimensionMapper();
 		$this->logger = $this->getMockBuilder('\OCP\ILogger')
 			->disableOriginalConstructor()
 			->getMock();
 		$this->db = $this->getMockBuilder('\OCP\IDb')
 			->disableOriginalConstructor()
 			->getMock();
-		$this->imageDimension = $this->getImageDimension();
+		$this->imageDimension = $this->mockImageDimension();
+		$this->imagehooks = $this->mockPostCreate();
 	}
 
-	/**
-	 * @return object|\PHPUnit_Framework_MockObject_MockObject
-	 */
-	protected function getImageDimensionMapper() {
-		/*return new ImageDimensionMapper(
-			$this->db
-		);*/
-
-		return $this->getMockBuilder('OCA\MediaMetadata\Services\ImageDimensionMapper')
-			->setConstructorArgs($this->db)
-			->getMock();
-
-		/*
-		 * Another Method
-		 * $app = new \OCA\MediaMetadata\AppInfo\Application();
-		 * $container = $app->getContainer();
-		 *
-		 * return new ImageDimensionMapper(
-		 *     $container->query('ServerContainer')->getDb()
-		 * );
-		 */
-	}
-
-	/**
-	 * @return object|\PHPUnit_Framework_MockObject_MockObject
-	 */
-	protected function getImageDimension() {
-		//return new ImageDimension();
-
-		return $this->getMockBuilder('OCA\MediaMetadata\Services\ImageDimension')
-			->disableOriginalConstructor()
-			->getMock();
-	}
-
-	/**
-	 * @param array $mockedMethods
-	 * @return object|ImageHooks|\PHPUnit_Framework_MockObject_MockObject
-	 */
-	protected function getImageHooks(array $mockedMethods = []) {
-		$app = new \OCA\MediaMetadata\AppInfo\Application();
-		$container = $app->getContainer();
-
-		if (!empty($mockedMethods)) {
-			return $this->getMockBuilder('OCA\MediaMetadata\Hooks\ImageHooks')
-				->setConstructorArgs([
-					$this->root,
-					$this->mapper,
-					$container->query('ServerContainer')->getConfig()->getSystemValue('datadirectory')
-				])
-				->setMethods($mockedMethods)
-				->getMock();
-		} else {
-			return new ImageHooks(
-				$this->root,
-				$this->mapper,
-				$container->query('ServerContainer')->getConfig()->getSystemValue('datadirectory')
-			);
-		}
-	}
-
-	protected function testImageHooks() {
-		$imageHooks = $this->getImageHooks([
-			'post_create',
-		]);
+	protected function testPostCreate() {
+		$imageHooks = $this->mockPostCreate();
 
 		$location = 'testFolder/test.jpg';
 		$fileId = 260495;
@@ -142,7 +79,7 @@ class ImageHooksTest extends TestCase {
 		$imageHeight = 100;
 		$dimensions = array($imageWidth, $imageHeight);
 
-		$this->mockGetImageSize($imageHooks, $location, $dimensions);
+		$this->mockGetImageSize($location, $dimensions);
 
 		$this->logger->log('debug', 'Test Image Path: '.$location, array('app' => 'MediaMetadata'));
 		$this->logger->log('debug', 'Test Image Height: '.$imageHeight, array('app' => 'MediaMetadata'));
@@ -158,8 +95,11 @@ class ImageHooksTest extends TestCase {
 			->method('setImageWidth')
 			->with($imageWidth);
 
-		//TODO: Mock Mapper->insert
+		$this->mapper->expects($this->once())
+			->method('insert')
+			->with($this->imageDimension);
 
+		$this->imagehooks->post_create($jpgFile);
 	}
 
 	/**
@@ -202,10 +142,61 @@ class ImageHooksTest extends TestCase {
 	 * @param $path
 	 * @param $dimensions
 	 */
-	protected function mockGetImageSize($mockClass, $path, $dimensions) {
-		$mockClass->expects($this->once())
+	//TODO: This is still not correctly implemented
+	protected function mockGetImageSize($path, $dimensions) {
+		$this->imagehooks->expects($this->once())
 			->method('getimagesize')
 			->with($path)
 			->willReturn($dimensions);
 	}
+
+	/**
+	 * @return object|\PHPUnit_Framework_MockObject_MockObject
+	 */
+	private function mockImageDimensionMapper() {
+		/*return new ImageDimensionMapper(
+			$this->db
+		);*/
+
+		return $this->getMockBuilder('OCA\MediaMetadata\Services\ImageDimensionMapper')
+			->setConstructorArgs($this->db)
+			->getMock();
+
+		/*
+		 * Another Method
+		 * $app = new \OCA\MediaMetadata\AppInfo\Application();
+		 * $container = $app->getContainer();
+		 *
+		 * return new ImageDimensionMapper(
+		 *     $container->query('ServerContainer')->getDb()
+		 * );
+		 */
+	}
+
+	/**
+	 * @return object|\PHPUnit_Framework_MockObject_MockObject
+	 */
+	private function mockImageDimension() {
+		//return new ImageDimension();
+
+		return $this->getMockBuilder('OCA\MediaMetadata\Services\ImageDimension')
+			->disableOriginalConstructor()
+			->getMock();
+	}
+
+	/**
+	 * @param array $mockedMethods
+	 * @return object|ImageHooks|\PHPUnit_Framework_MockObject_MockObject
+	 */
+	private function mockPostCreate() {
+		$app = new \OCA\MediaMetadata\AppInfo\Application();
+		$container = $app->getContainer();
+
+		return new ImageHooks(
+			$this->root,
+			$this->mapper,
+			$container->query('ServerContainer')->getConfig()->getSystemValue('datadirectory')
+		);
+	}
+
 }
