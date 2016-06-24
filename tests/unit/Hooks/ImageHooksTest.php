@@ -11,6 +11,9 @@
 
 namespace OCA\MediaMetadata\Hooks;
 
+function getimagesize($filename = null, array &$imageinfo = null) {
+	return ImageHooksTest::$dimensions ?: getimagesize($filename);
+}
 
 use OCA\MediaMetadata\Services\ImageDimension;
 use OCA\MediaMetadata\Services\ImageDimensionMapper;
@@ -51,6 +54,11 @@ class ImageHooksTest extends TestCase {
 	 */
 	protected $imageDimension;
 
+	/**
+	 * @var array $dimensions that will be returned by getimagesize()
+	 */
+	public static $dimensions;
+
 	protected function setUp() {
 		parent::setUp();
 
@@ -65,12 +73,17 @@ class ImageHooksTest extends TestCase {
 			->disableOriginalConstructor()
 			->getMock();
 		$this->imageDimension = $this->mockImageDimension();
-		$this->imagehooks = $this->mockPostCreate();
+
+		$app = new \OCA\MediaMetadata\AppInfo\Application();
+		$container = $app->getContainer();
+		$this->imagehooks = new ImageHooks(
+			$this->root,
+			$this->mapper,
+			$container->query('ServerContainer')->getConfig()->getSystemValue('datadirectory')
+		);
 	}
 
 	protected function testPostCreate() {
-		$imageHooks = $this->mockPostCreate();
-
 		$location = 'testFolder/test.jpg';
 		$fileId = 260495;
 		$jpgFile = $this->mockJpgFile($location, $fileId);
@@ -138,15 +151,13 @@ class ImageHooksTest extends TestCase {
 	}
 
 	/**
-	 * @param $mockClass
-	 * @param $path
+	 * @param $location
 	 * @param $dimensions
 	 */
-	//TODO: This is still not correctly implemented
-	protected function mockGetImageSize($path, $dimensions) {
+	private function mockGetImageSize($location, $dimensions) {
 		$this->imagehooks->expects($this->once())
 			->method('getimagesize')
-			->with($path)
+			->with($location)
 			->willReturn($dimensions);
 	}
 
@@ -188,15 +199,18 @@ class ImageHooksTest extends TestCase {
 	 * @param array $mockedMethods
 	 * @return object|ImageHooks|\PHPUnit_Framework_MockObject_MockObject
 	 */
-	private function mockPostCreate() {
+	private function mockPostCreate(array $mockedMethods = []) {
 		$app = new \OCA\MediaMetadata\AppInfo\Application();
 		$container = $app->getContainer();
 
-		return new ImageHooks(
-			$this->root,
-			$this->mapper,
-			$container->query('ServerContainer')->getConfig()->getSystemValue('datadirectory')
-		);
+		return $this->getMockBuilder('OCA\MediaMetadata\Hooks\ImageHooks')
+			->setConstructorArgs([
+				$this->root,
+				$this->mapper,
+				$container->query('ServerContainer')->getConfig()->getSystemValue('datadirectory')
+			])
+			->setMethods($mockedMethods)
+			->getMock();
 	}
 
 }
