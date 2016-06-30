@@ -14,12 +14,13 @@ namespace OCA\MediaMetadata\Services;
 
 use OCP\AppFramework\Db\Mapper;
 use OCP\IDb;
+use OCP\IDBConnection;
 
 class ImageDimensionMapper extends Mapper {
 	/**
-	 * @param IDb $database
+	 * @param IDBConnection $database
 	 */
-	public function __construct(IDb $database) {
+	public function __construct(IDBConnection $database) {
 		parent::__construct($database, 'mediametadata_image_size', '\OCA\MediaMetadata\Services\ImageDimension');
 	}
 
