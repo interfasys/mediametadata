@@ -37,7 +37,7 @@ class ImageHooks {
 		$reference = $this;
 
 		$callback = function (Node $node) use($reference) {
-			$reference->post_create($node);
+			$reference->postCreate($node);
 		};
 
 		$this->root->listen('\OC\Files', 'postCreate', $callback);
@@ -46,7 +46,7 @@ class ImageHooks {
 	/**
 	 * @param Node $node
 	 */
-	public function post_create(Node $node) {
+	public function postCreate(Node $node) {
 		$absolutePath = $this->dataDirectory.$node->getPath();
 
 		$dimensions = getimagesize($absolutePath);
