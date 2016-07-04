@@ -8,7 +8,7 @@
 	<charset>utf8</charset>
 
 	<table>
-		<name>*dbprefix*mediametadata_image_size</name>
+		<name>*dbprefix*mediametadata</name>
 
 		<declaration>
 
@@ -19,6 +19,13 @@
 				<notnull>true</notnull>
 				<autoincrement>1</autoincrement>
 				<length>4</length>
+			</field>
+
+			<field>
+				<name>date_created</name>
+				<type>date</type>
+				<notnull>true</notnull>
+				<length>10</length>
 			</field>
 
 			<field>
@@ -33,8 +40,79 @@
 				<name>image_width</name>
 				<type>integer</type>
 				<default></default>
+				<notnull>true</notnull>
+				<length>4</length>
+			</field>
+
+			<field>
+				<name>gps_latitude</name>
+				<type>float</type>
+				<default></default>
 				<notnull>false</notnull>
-				<length>8</length>
+				<length>4</length>
+			</field>
+
+			<field>
+				<name>gps_longitude</name>
+				<type>float</type>
+				<default></default>
+				<notnull>false</notnull>
+				<length>4</length>
+			</field>
+
+			<field>
+				<name>image_orientation</name>
+				<type>text</type>
+				<default></default>
+				<notnull>false</notnull>
+				<length>20</length>
+			</field>
+
+			<field>
+				<name>date_modified</name>
+				<type>date</type>
+				<notnull>false</notnull>
+				<length>10</length>
+			</field>
+
+			<field>
+				<name>image_caption</name>
+				<type>text</type>
+				<default></default>
+				<notnull>false</notnull>
+				<length>255</length>
+			</field>
+
+			<field>
+				<name>created_by</name>
+				<type>text</type>
+				<default></default>
+				<notnull>false</notnull>
+				<length>64</length>
+			</field>
+
+			<field>
+				<name>image_keywords</name>
+				<type>text</type>
+				<default></default>
+				<notnull>false</notnull>
+				<length>1024</length>
+			</field>
+
+			<field>
+				<name>camera_make</name>
+				<type>text</type>
+				<default></default>
+				<notnull>false</notnull>
+				<length>64</length>
+			</field>
+
+			<field>
+				<name>camera_model</name>
+				<type>text</type>
+				<default></default>
+				<notnull>false</notnull>
+				<length>64</length>
 			</field>
 
 			<field>
