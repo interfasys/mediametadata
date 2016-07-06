@@ -61,61 +61,6 @@
 			</field>
 
 			<field>
-				<name>image_orientation</name>
-				<type>text</type>
-				<default></default>
-				<notnull>false</notnull>
-				<length>20</length>
-			</field>
-
-			<field>
-				<name>date_modified</name>
-				<type>date</type>
-				<notnull>false</notnull>
-				<length>10</length>
-			</field>
-
-			<field>
-				<name>image_caption</name>
-				<type>text</type>
-				<default></default>
-				<notnull>false</notnull>
-				<length>255</length>
-			</field>
-
-			<field>
-				<name>created_by</name>
-				<type>text</type>
-				<default></default>
-				<notnull>false</notnull>
-				<length>64</length>
-			</field>
-
-			<field>
-				<name>image_keywords</name>
-				<type>text</type>
-				<default></default>
-				<notnull>false</notnull>
-				<length>1024</length>
-			</field>
-
-			<field>
-				<name>camera_make</name>
-				<type>text</type>
-				<default></default>
-				<notnull>false</notnull>
-				<length>64</length>
-			</field>
-
-			<field>
-				<name>camera_model</name>
-				<type>text</type>
-				<default></default>
-				<notnull>false</notnull>
-				<length>64</length>
-			</field>
-
-			<field>
 				<name>image_id</name>
 				<type>integer</type>
 				<default></default>
