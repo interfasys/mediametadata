@@ -15,10 +15,13 @@ namespace OCA\MediaMetadata\Services;
 use OCP\AppFramework\Db\Entity;
 use JsonSerializable;
 
-class ImageDimension extends Entity implements JsonSerializable {
+class ImageMetadata extends Entity implements JsonSerializable {
 	protected $imageId;
 	protected $imageHeight;
 	protected $imageWidth;
+	protected $dateCreated;
+	protected $gpsLatitude;
+	protected $gpsLongitude;
 
 	/**
 	 * @return array
@@ -26,9 +29,12 @@ class ImageDimension extends Entity implements JsonSerializable {
 	public function jsonSerialize() {
 		return [
 			'id' => $this->id,
-			'imageId' => $this->imageId,
-			'imageHeight' => $this->imageHeight,
-			'imageWidth' => $this->imageWidth
+			'imageId'      => $this->imageId,
+			'imageHeight'  => $this->imageHeight,
+			'imageWidth'   => $this->imageWidth,
+			'dateCreated'  => $this->dateCreated,
+			'gpsLatitude'  => $this->gpsLatitude,
+			'gpsLongitude' => $this->gpsLongitude
 		];
 	}
 }
