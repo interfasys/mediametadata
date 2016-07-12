@@ -49,7 +49,7 @@ class ImageHooks {
 	public function postCreate(Node $node) {
 		$absolutePath = $this->dataDirectory.$node->getPath();
 
-		$dimensions = getimagesize($absolutePath);
+		$dimensions = getimagesize($absolutePath, $info);
 
 		$logger = \OC::$server->getLogger();
 		$logger->log('debug', 'Image Path: '.$absolutePath, array('app' => 'MediaMetadata'));
@@ -67,6 +67,9 @@ class ImageHooks {
 			$imageMetadata->setImageWidth($image_width);
 		}
 
+		/**
+		 * EXIF Metadata Extraction
+		 */
 		$exif = exif_read_data($absolutePath, 0, true);
 
 		if($exif !== false) {
@@ -100,6 +103,23 @@ class ImageHooks {
 
 				$gpsLongitude = $this->getGPS($exif['GPS']['GPSLongitude'], $exif['GPS']['GPSLongitudeRef']);
 				$imageMetadata->setGpsLongitude($gpsLongitude);
+			}
+		}
+
+		$this->output_iptc_data($absolutePath);
+
+		/**
+		 * IPTC Metadata Extraction
+		 */
+		if(is_array($info)) {
+			if (isset($info["APP13"])) {
+				$iptc = iptcparse($info["APP13"]);
+				if (is_array($iptc)) {
+					$logger->info('Date Created extracted from IPTC: '.$iptc['2#055'][0], array('app' => 'MediaMetadata'));
+					$logger->info('City extracted from IPTC: '.$iptc['2#090'][0], array('app' => 'MediaMetadata'));
+					$logger->info('State extracted from IPTC: '.$iptc['2#095'][0], array('app' => 'MediaMetadata'));
+					$logger->info('Country extracted from IPTC: '.$iptc['2#101'][0], array('app' => 'MediaMetadata'));
+				}
 			}
 		}
 
@@ -137,5 +157,23 @@ class ImageHooks {
 			return $parts[0];
 
 		return floatval($parts[0]) / floatval($parts[1]);
+	}
+
+	private function output_iptc_data( $image_path ) {
+		getimagesize($image_path, $info);
+		$logger = \OC::$server->getLogger();
+		if(is_array($info)) {
+			if(isset($info["APP13"])) {
+				$iptc = iptcparse($info["APP13"]);
+				if(is_array($iptc)) {
+					foreach (array_keys($iptc) as $s) {
+						$c = count($iptc[$s]);
+						for ($i = 0; $i < $c; $i++) {
+							$logger->warning($s . ' = ' . $iptc[$s][$i], array('app' => 'MediaMetadata'));
+						}
+					}
+				}
+			}
+		}
 	}
 }
