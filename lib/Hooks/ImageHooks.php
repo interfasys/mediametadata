@@ -52,15 +52,15 @@ class ImageHooks {
 		$dimensions = getimagesize($absolutePath);
 
 		$logger = \OC::$server->getLogger();
-		$logger->log('debug', 'Image Path: '.$absolutePath, array('app' => 'MediaMetadata'));
+		$logger->log('debug', 'Image Path: {absolutePath}', array('app' => 'MediaMetadata', 'absolutePath' => $absolutePath));
 
 		$imageMetadata = new ImageMetadata();
 
 		if ($dimensions !== false) {
 			list($image_width, $image_height) = $dimensions;
 
-			$logger->log('debug', 'Image Height: '.$image_height, array('app' => 'MediaMetadata'));
-			$logger->log('debug', 'Image Width: '.$image_width, array('app' => 'MediaMetadata'));
+			$logger->log('debug', 'Image Height: {image_height}', array('app' => 'MediaMetadata', 'image_height' => $image_height));
+			$logger->log('debug', 'Image Width: {image_width}', array('app' => 'MediaMetadata', 'image_width' => $image_width));
 
 			$imageMetadata->setImageId($node->getId());
 			$imageMetadata->setImageHeight($image_height);
@@ -70,40 +70,53 @@ class ImageHooks {
 		$exif = exif_read_data($absolutePath, 0, true);
 
 		if($exif !== false) {
-			$logger->info('EXIF Info', array('app' => 'MediaMetadata'));
+			$logger->debug('EXIF Info', array('app' => 'MediaMetadata'));
 
 			foreach ($exif as $key => $section) {
 				foreach ($section as $name => $val) {
-					$logger->info($key . '.' . $name . ': ' . $val, array('app' => 'MediaMetadata'));
+					$logger->debug('{key}.{name}: {val}', array(
+						'app'  => 'MediaMetadata',
+						'key'  => $key,
+						'name' => $name,
+						'val'  => $val
+					));
 				}
 			}
 
 			// Date Created
-			if((array_key_exists('EXIF', $exif)) AND (array_key_exists('DateTimeOriginal', $exif['EXIF']))) {
+			if((array_key_exists('EXIF', $exif)) && (array_key_exists('DateTimeOriginal', $exif['EXIF']))) {
 				$date_created = $exif['EXIF']['DateTimeOriginal'];
 				$imageMetadata->setDateCreated($date_created);
 			}
 
 			// GPS Latitude
-			if((array_key_exists('GPS', $exif)) AND (array_key_exists('GPSLatitude', $exif['GPS']))) {
-				$logger->notice('Keys of GPS Latitude: [0]- '.$exif['GPS']['GPSLatitude'][0].' [1]- '.$exif['GPS']['GPSLatitude'][1].' [2]- '.$exif['GPS']['GPSLatitude'][2],
-					array('app' => 'Mediametadata'));
+			if((array_key_exists('GPS', $exif)) && (array_key_exists('GPSLatitude', $exif['GPS']))) {
+				$logger->debug('Keys of GPS Latitude: [0]- {degrees} [1]- {minutes} [2]- {seconds}', array(
+					'app' 	  => 'Mediametadata',
+					'degrees' => $exif['GPS']['GPSLatitude'][0],
+					'minutes' => $exif['GPS']['GPSLatitude'][1],
+					'seconds' => $exif['GPS']['GPSLatitude'][2]
+				));
 
 				$gpsLatitude = $this->getGPS($exif['GPS']['GPSLatitude'], $exif['GPS']['GPSLatitudeRef']);
 				$imageMetadata->setGpsLatitude($gpsLatitude);
 			}
 
 			// GPS Longitude
-			if((array_key_exists('GPS', $exif)) AND (array_key_exists('GPSLongitude', $exif['GPS']))) {
-				$logger->notice('Keys of GPS Longitude: [0]- '.$exif['GPS']['GPSLongitude'][0].' [1]- '.$exif['GPS']['GPSLongitude'][1].' [2]- '.$exif['GPS']['GPSLongitude'][2],
-					array('app' => 'Mediametadata'));
+			if((array_key_exists('GPS', $exif)) && (array_key_exists('GPSLongitude', $exif['GPS']))) {
+				$logger->debug('Keys of GPS Longitude: [0]- {degrees} [1]- {minutes} [2]- {seconds}', array(
+					'app' 	  => 'Mediametadata',
+					'degrees' => $exif['GPS']['GPSLongitude'][0],
+					'minutes' => $exif['GPS']['GPSLongitude'][1],
+					'seconds' => $exif['GPS']['GPSLongitude'][2]
+				));
 
 				$gpsLongitude = $this->getGPS($exif['GPS']['GPSLongitude'], $exif['GPS']['GPSLongitudeRef']);
 				$imageMetadata->setGpsLongitude($gpsLongitude);
 			}
 		}
 
-		if($exif !== false or $dimensions !== false) {
+		if($exif !== false || $dimensions !== false) {
 			$this->mapper->insert($imageMetadata);
 		}
 	}
@@ -118,7 +131,7 @@ class ImageHooks {
 		$minutes = count($exifGPSData) > 1 ? $this->GPStoNUM($exifGPSData[1]) : 0;
 		$seconds = count($exifGPSData) > 2 ? $this->GPStoNUM($exifGPSData[2]) : 0;
 
-		$isFlip = ($Hemisphere == 'W' or $Hemisphere == 'S') ? -1 : 1;
+		$isFlip = ($Hemisphere == 'W' || $Hemisphere == 'S') ? -1 : 1;
 
 		return $isFlip * ($degrees + $minutes / 60 + $seconds / 3600);
 	}
