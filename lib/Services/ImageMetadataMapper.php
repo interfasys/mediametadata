@@ -15,12 +15,12 @@ namespace OCA\MediaMetadata\Services;
 use OCP\AppFramework\Db\Mapper;
 use OCP\IDb;
 
-class ImageDimensionMapper extends Mapper {
+class ImageMetadataMapper extends Mapper {
 	/**
 	 * @param IDb $database
 	 */
 	public function __construct(IDb $database) {
-		parent::__construct($database, 'mediametadata_image_size', '\OCA\MediaMetadata\Services\ImageDimension');
+		parent::__construct($database, 'mediametadata', '\OCA\MediaMetadata\Services\ImageMetadata');
 	}
 
 	/**
@@ -28,7 +28,7 @@ class ImageDimensionMapper extends Mapper {
 	 * @return \OCP\AppFramework\Db\Entity
 	 */
 	public function find($imageID) {
-		$sql = 'SELECT * FROM *PREFIX*mediametadata_image_size WHERE image_id = ?';
+		$sql = 'SELECT * FROM *PREFIX*mediametadata WHERE image_id = ?';
 		return $this->findEntity($sql, [$imageID]);
 	}
 }

@@ -13,7 +13,7 @@ namespace OCA\MediaMetadata\AppInfo;
 
 
 use OCA\MediaMetadata\Hooks\ImageHooks;
-use OCA\MediaMetadata\Services\ImageDimensionMapper;
+use OCA\MediaMetadata\Services\ImageMetadataMapper;
 use OCP\AppFramework\App;
 use OCP\IContainer;
 
@@ -31,13 +31,13 @@ class Application extends App {
 			$serverContainer = $Container->query('ServerContainer');
 			return new ImageHooks(
 				$serverContainer->getRootFolder(),
-				$Container->query('ImageDimensionMapper'),
+				$Container->query('ImageMetadataMapper'),
 				$serverContainer->getConfig()->getSystemValue('datadirectory')
 			);
 		});
 
-		$container->registerService('ImageDimensionMapper', function(IContainer $Container) {
-			return new ImageDimensionMapper(
+		$container->registerService('ImageMetadataMapper', function(IContainer $Container) {
+			return new ImageMetadataMapper(
 				$Container->query('ServerContainer')->getDb()
 			);
 		});

@@ -5,7 +5,7 @@
     <description>An ownCloud Application which provides CRUD access to the metadata stored in images</description>
     <licence>AGPL</licence>
     <author>Jalpreet Singh Nanda (:imjalpreet)</author>
-    <version>0.0.1</version>
+    <version>0.0.2.2</version>
     <namespace>MediaMetadata</namespace>
     <category>productivity</category>
 	<types>
