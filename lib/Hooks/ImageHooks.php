@@ -13,8 +13,10 @@ namespace OCA\MediaMetadata\Hooks;
 
 
 use OC\Files\Node\Root;
+use OCA\MediaMetadata\Services\ExtractMetadata;
 use OCA\MediaMetadata\Services\ImageDimension;
 use OCA\MediaMetadata\Services\ImageDimensionMapper;
+use OCA\MediaMetadata\Services\StoreMetadata;
 use OCP\Files\Node;
 
 class ImageHooks {
@@ -49,23 +51,10 @@ class ImageHooks {
 	public function postCreate(Node $node) {
 		$absolutePath = $this->dataDirectory.$node->getPath();
 
-		$dimensions = getimagesize($absolutePath);
+		$metadataExtracter = new ExtractMetadata($absolutePath);
+		$metadata = $metadataExtracter->extract();
 
-		$logger = \OC::$server->getLogger();
-		$logger->log('debug', 'Image Path: '.$absolutePath, array('app' => 'MediaMetadata'));
-
-		if ($dimensions !== false) {
-			list($image_width, $image_height) = $dimensions;
-
-			$logger->log('debug', 'Image Height: '.$image_height, array('app' => 'MediaMetadata'));
-			$logger->log('debug', 'Image Width: '.$image_width, array('app' => 'MediaMetadata'));
-
-			$imageDimension = new ImageDimension();
-			$imageDimension->setImageId($node->getId());
-			$imageDimension->setImageHeight($image_height);
-			$imageDimension->setImageWidth($image_width);
-
-			$this->mapper->insert($imageDimension);
-		}
+		$dbManager = new StoreMetadata($node, $this->mapper);
+		$dbManager->store($metadata);
 	}
 }
