@@ -23,6 +23,9 @@ class StoreMetadata {
 		$this->imageDimensionMapper = $mapper;
 	}
 
+	/**
+	 * @param $metadata
+	 */
 	public function store($metadata) {
 		$imageDimension = new ImageDimension();
 
@@ -36,6 +39,24 @@ class StoreMetadata {
 		if(array_key_exists('imageWidth', $metadata)) {
 			$imageDimension->setImageWidth($metadata['imageWidth']);
 		}
+
+/* TODO: Update Database.xml
+		//EXIF Data
+		//Date Created
+		if(array_key_exists('EXIFData', $metadata) && array_key_exists('dateCreated', $metadata['EXIFData'])) {
+			$imageDimension->setDateCreated($metadata['EXIFData']['dateCreated']);
+		}
+
+		//GPS Latitude
+		if(array_key_exists('EXIFData', $metadata) && array_key_exists('gpsLatitude', $metadata['EXIFData'])) {
+			$imageDimension->setGpsLatitude($metadata['EXIFData']['gpsLatitude']);
+		}
+
+		//GPS Longitude
+		if(array_key_exists('EXIFData', $metadata) && array_key_exists('gpsLongitude', $metadata['EXIFData'])) {
+			$imageDimension->setGpsLongitude($metadata['EXIFData']['gpsLongitude']);
+		}
+*/
 
 		//Insert to Database
 		$entity = $this->imageDimensionMapper->insert($imageDimension);
