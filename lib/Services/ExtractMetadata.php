@@ -34,9 +34,19 @@ class ExtractMetadata {
 			$metadata['imageHeight'] = $image_height;
 		}
 
+		/**
+		 * EXIF Metadata Extraction
+		 */
 		$exifData = $this->extractEXIFMetadata();
 
 		$metadata['EXIFData'] = $exifData;
+
+		/**
+		 * IPTC Metadata Extraction
+		 */
+		$iptcData = $this->extractIPTCData();
+
+		$metadata['IPTCData'] = $iptcData;
 
 		return $metadata;
 	}
@@ -120,6 +130,59 @@ class ExtractMetadata {
 		return null;
 	}
 
+	private function extractIPTCData() {
+		$dimensions = getimagesize($this->absoluteImagePath, $info);
+
+		$this->output_iptc_data($this->absoluteImagePath);
+
+		$logger = \OC::$server->getLogger();
+
+		$iptcData = array();
+
+		/**
+		 * IPTC Metadata Extraction
+		 */
+		if(is_array($info)) {
+			if (isset($info["APP13"])) {
+				$iptc = iptcparse($info["APP13"]);
+				if (is_array($iptc)) {
+					$logger->info('Date Created extracted from IPTC: {dateCreated}',
+						array(
+							'app' => 'MediaMetadata',
+							'dateCreated' => $iptc['2#055'][0]
+						)
+					);
+					$iptcData['DateCreated'] = $iptc['2#055'][0];
+
+					$logger->info('City extracted from IPTC: {city}',
+						array(
+							'app' => 'MediaMetadata',
+							'city' => $iptc['2#090'][0]
+						)
+					);
+					$iptcData['City'] = $iptc['2#090'][0];
+
+					$logger->info('State extracted from IPTC: {State}',
+						array(
+							'app' => 'MediaMetadata',
+							'State' => $iptc['2#095'][0]
+						)
+					);
+					$iptcData['State'] = $iptc['2#095'][0];
+
+					$logger->info('Country extracted from IPTC: {Country}',
+						array(
+							'app' => 'MediaMetadata',
+							'Country' => $iptc['2#101'][0]
+						)
+					);
+					$iptcData['Country'] = $iptc['2#101'][0];
+				}
+			}
+			return $iptcData;
+		}
+	}
+
 	/**
 	 * @param $exifGPSData
 	 * @param $Hemisphere
@@ -149,5 +212,26 @@ class ExtractMetadata {
 			return $parts[0];
 
 		return floatval($parts[0]) / floatval($parts[1]);
+	}
+
+	/**
+	 * @param $image_path
+	 */
+	private function output_iptc_data( $image_path ) {
+		getimagesize($image_path, $info);
+		$logger = \OC::$server->getLogger();
+		if(is_array($info)) {
+			if(isset($info["APP13"])) {
+				$iptc = iptcparse($info["APP13"]);
+				if(is_array($iptc)) {
+					foreach (array_keys($iptc) as $s) {
+						$c = count($iptc[$s]);
+						for ($i = 0; $i < $c; $i++) {
+							$logger->warning($s . ' = ' . $iptc[$s][$i], array('app' => 'MediaMetadata'));
+						}
+					}
+				}
+			}
+		}
 	}
 }
