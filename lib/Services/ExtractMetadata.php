@@ -48,6 +48,13 @@ class ExtractMetadata {
 
 		$metadata['IPTCData'] = $iptcData;
 
+		/**
+		 * XMP Metadata Extraction
+		 */
+		$xmpData = $this->get_xmp_array($this->extractXMPData());
+
+		$metadata['XMPData'] = $xmpData;
+
 		return $metadata;
 	}
 
@@ -181,6 +188,52 @@ class ExtractMetadata {
 			}
 			return $iptcData;
 		}
+	}
+
+	/**
+	 * @return \SimpleXMLElement
+	 */
+	private function extractXMPData() {
+		$content = file_get_contents($this->absoluteImagePath);
+		$xmp_data_start = strpos($content, '<x:xmpmeta');
+		$xmp_data_end   = strpos($content, '</x:xmpmeta>');
+		$xmp_length     = $xmp_data_end - $xmp_data_start;
+		$xmp_data       = substr($content, $xmp_data_start, $xmp_length + 12);
+
+		//$logger = \OC::$server->getLogger();
+		//$logger->critical('XMP DATA: {xmpData}', array('app' => 'MediaMetadata', 'xmpData' => $xmp_data));
+
+		return $xmp_data;
+	}
+
+	/**
+	 * @param $xmp_raw
+	 * @return array $xmp_arr
+	 */
+	function get_xmp_array( $xmp_raw ) {
+		$xmp_arr = array();
+		foreach ( array(
+					  'Creation Date'      => '<xap:CreateDate>([^<]*)<\/xap:CreateDate>',
+					  'Modification Date'  => '<xap:ModifyDate>([^<]*)<\/xap:ModifyDate>',
+					  'City'               => '<photoshop:City>([^<]*)<\/photoshop:City>',
+					  'State'              => '<photoshop:State>([^<]*)<\/photoshop:State>',
+					  'Country'            => '<photoshop:Country>([^<]*)<\/photoshop:Country>',
+					  'Location'           => '<Iptc4xmpCore:Location>([^<]*)<\/Iptc4xmpCore:Location>'
+				  ) as $key => $regex ) {
+
+			// get a single text string
+			$xmp_arr[$key] = preg_match( "/$regex/is", $xmp_raw, $match ) ? $match[1] : '';
+
+			$logger = \OC::$server->getLogger();
+			$logger->critical('Key: {Key} - Value: {Value}', array('app' => 'MediaMetadata', 'Key' => $key, 'Value' => $xmp_arr[$key]));
+
+			// hierarchical keywords need to be split into a third dimension
+			if ( ! empty( $xmp_arr[$key] ) && $key == 'Hierarchical Keywords' ) {
+				foreach ( $xmp_arr[$key] as $li => $val ) $xmp_arr[$key][$li] = explode( '|', $val );
+				unset ( $li, $val );
+			}
+		}
+		return $xmp_arr;
 	}
 
 	/**

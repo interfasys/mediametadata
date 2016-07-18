@@ -58,6 +58,8 @@ class StoreMetadata {
 		}
 */
 
+	//TODO: Write store methods for IPTC and XMP Metadata
+
 		//Insert to Database
 		$entity = $this->imageDimensionMapper->insert($imageDimension);
 	}
