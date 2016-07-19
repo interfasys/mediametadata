@@ -13,7 +13,9 @@ namespace OCA\MediaMetadata\AppInfo;
 
 
 use OCA\MediaMetadata\Hooks\ImageHooks;
+use OCA\MediaMetadata\Services\ExtractMetadata;
 use OCA\MediaMetadata\Services\ImageDimensionMapper;
+use OCA\MediaMetadata\Services\StoreMetadata;
 use OCP\AppFramework\App;
 use OCP\IContainer;
 
@@ -32,6 +34,8 @@ class Application extends App {
 			return new ImageHooks(
 				$serverContainer->getRootFolder(),
 				$Container->query('ImageDimensionMapper'),
+				$Container->query('ExtractMetadata'),
+				$Container->query('StoreMetadata'),
 				$serverContainer->getConfig()->getSystemValue('datadirectory')
 			);
 		});
@@ -39,6 +43,16 @@ class Application extends App {
 		$container->registerService('ImageDimensionMapper', function(IContainer $Container) {
 			return new ImageDimensionMapper(
 				$Container->query('ServerContainer')->getDb()
+			);
+		});
+
+		$container->registerService('ExtractMetadata', function(IContainer $Container) {
+			return new ExtractMetadata();
+		});
+
+		$container->registerService('StoreMetadata', function(IContainer $Container) {
+			return new StoreMetadata(
+				$Container->query('ImageDimensionMapper')
 			);
 		});
 	}
