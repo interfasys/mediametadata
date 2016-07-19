@@ -12,25 +12,25 @@ namespace OCA\MediaMetadata\Services;
 use OCP\Files\Node;
 
 class StoreMetadata {
-	protected $node;
 	protected $imageDimensionMapper;
 
 	/**
-	 * @param Node $node
+	 * @param ImageDimensionMapper $mapper
 	 */
-	public function __construct(Node $node, ImageDimensionMapper $mapper) {
-		$this->node = $node;
+	public function __construct(ImageDimensionMapper $mapper) {
 		$this->imageDimensionMapper = $mapper;
 	}
 
 	/**
 	 * @param $metadata
+	 * @param Node $node
+	 * @return bool
 	 */
-	public function store($metadata) {
+	public function store($metadata, Node $node) {
 		$imageDimension = new ImageDimension();
 
 		//Image ID
-		$imageDimension->setImageId($this->node->getId());
+		$imageDimension->setImageId($node->getId());
 		//Image Height
 		if(array_key_exists('imageHeight', $metadata)) {
 			$imageDimension->setImageHeight($metadata['imageHeight']);
@@ -62,5 +62,7 @@ class StoreMetadata {
 
 		//Insert to Database
 		$entity = $this->imageDimensionMapper->insert($imageDimension);
+
+		return true;
 	}
 }

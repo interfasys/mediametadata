@@ -23,16 +23,22 @@ class ImageHooks {
 	protected $root;
 	protected $mapper;
 	protected $dataDirectory;
+	protected $metadataExtractor;
+	protected $dbManager;
 
 	/**
 	 * @param Root $root
 	 * @param ImageDimensionMapper $mapper
-	 * @param $datadirectory
+	 * @param ExtractMetadata $metadataExtractor
+	 * @param StoreMetadata $dbManager
+	 * @param $dataDirectory
 	 */
-	public function __construct(Root $root, ImageDimensionMapper $mapper, $dataDirectory) {
+	public function __construct(Root $root, ImageDimensionMapper $mapper, ExtractMetadata $metadataExtractor, StoreMetadata $dbManager, $dataDirectory) {
 		$this->root = $root;
 		$this->mapper = $mapper;
 		$this->dataDirectory = $dataDirectory;
+		$this->metadataExtractor = $metadataExtractor;
+		$this->dbManager = $dbManager;
 	}
 
 	public function register() {
@@ -51,10 +57,8 @@ class ImageHooks {
 	public function postCreate(Node $node) {
 		$absolutePath = $this->dataDirectory.$node->getPath();
 
-		$metadataExtracter = new ExtractMetadata($absolutePath);
-		$metadata = $metadataExtracter->extract();
+		$metadata = $this->metadataExtractor->extract($absolutePath);
 
-		$dbManager = new StoreMetadata($node, $this->mapper);
-		$dbManager->store($metadata);
+		$result = $this->dbManager->store($metadata, $node);
 	}
 }

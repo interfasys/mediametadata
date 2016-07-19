@@ -10,20 +10,15 @@ namespace OCA\MediaMetadata\Services;
 
 
 class ExtractMetadata {
-	protected $absoluteImagePath;
+
+	public function __construct() {}
 
 	/**
-	 * @param $imagePath
+	 * @param $absoluteImagePath
+	 * @return array
 	 */
-	public function __construct($imagePath) {
-		$this->absoluteImagePath = $imagePath;
-	}
-
-	/**
-	 * @return array $metadata
-	 */
-	public function extract() {
-		$dimensions = $this->extractImageDimensions();
+	public function extract($absoluteImagePath) {
+		$dimensions = $this->extractImageDimensions($absoluteImagePath);
 
 		$metadata = array();
 
@@ -37,21 +32,21 @@ class ExtractMetadata {
 		/**
 		 * EXIF Metadata Extraction
 		 */
-		$exifData = $this->extractEXIFMetadata();
+		$exifData = $this->extractEXIFMetadata($absoluteImagePath);
 
 		$metadata['EXIFData'] = $exifData;
 
 		/**
 		 * IPTC Metadata Extraction
 		 */
-		$iptcData = $this->extractIPTCData();
+		$iptcData = $this->extractIPTCData($absoluteImagePath);
 
 		$metadata['IPTCData'] = $iptcData;
 
 		/**
 		 * XMP Metadata Extraction
 		 */
-		$xmpData = $this->get_xmp_array($this->extractXMPData());
+		$xmpData = $this->get_xmp_array($this->extractXMPData($absoluteImagePath));
 
 		$metadata['XMPData'] = $xmpData;
 
@@ -59,13 +54,14 @@ class ExtractMetadata {
 	}
 
 	/**
-	 * @return array $dimensions
+	 * @param $absoluteImagePath
+	 * @return array
 	 */
-	private function extractImageDimensions() {
-		$dimensions = getimagesize($this->absoluteImagePath);
+	private function extractImageDimensions($absoluteImagePath) {
+		$dimensions = getimagesize($absoluteImagePath);
 
 		$logger = \OC::$server->getLogger();
-		$logger->log('debug', 'Image Path: {absolutePath}', array('app' => 'MediaMetadata', 'absolutePath' => $this->absoluteImagePath));
+		$logger->log('debug', 'Image Path: {absolutePath}', array('app' => 'MediaMetadata', 'absolutePath' => $absoluteImagePath));
 
 		if ($dimensions !== false) {
 			list($image_width, $image_height) = $dimensions;
@@ -78,10 +74,11 @@ class ExtractMetadata {
 	}
 
 	/**
-	 * @return array|null $exifData
+	 * @param $absoluteImagePath
+	 * @return array|null
 	 */
-	private function extractEXIFMetadata() {
-		$exif = exif_read_data($this->absoluteImagePath, 0, true);
+	private function extractEXIFMetadata($absoluteImagePath) {
+		$exif = exif_read_data($absoluteImagePath, 0, true);
 
 		$logger = \OC::$server->getLogger();
 
@@ -137,10 +134,14 @@ class ExtractMetadata {
 		return null;
 	}
 
-	private function extractIPTCData() {
-		$dimensions = getimagesize($this->absoluteImagePath, $info);
+	/**
+	 * @param $absoluteImagePath
+	 * @return array
+	 */
+	private function extractIPTCData($absoluteImagePath) {
+		$dimensions = getimagesize($absoluteImagePath, $info);
 
-		$this->output_iptc_data($this->absoluteImagePath);
+		$this->output_iptc_data($absoluteImagePath);
 
 		$logger = \OC::$server->getLogger();
 
@@ -191,10 +192,11 @@ class ExtractMetadata {
 	}
 
 	/**
-	 * @return \SimpleXMLElement
+	 * @param $absoluteImagePath
+	 * @return string
 	 */
-	private function extractXMPData() {
-		$content = file_get_contents($this->absoluteImagePath);
+	private function extractXMPData($absoluteImagePath) {
+		$content = file_get_contents($absoluteImagePath);
 		$xmp_data_start = strpos($content, '<x:xmpmeta');
 		$xmp_data_end   = strpos($content, '</x:xmpmeta>');
 		$xmp_length     = $xmp_data_end - $xmp_data_start;
