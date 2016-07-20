@@ -53,6 +53,7 @@ class ImageHooks {
 
 	/**
 	 * @param Node $node
+	 * @return bool
 	 */
 	public function postCreate(Node $node) {
 		$absolutePath = $this->dataDirectory.$node->getPath();
@@ -60,5 +61,12 @@ class ImageHooks {
 		$metadata = $this->metadataExtractor->extract($absolutePath);
 
 		$result = $this->dbManager->store($metadata, $node);
+
+		if($result == false) {
+			$logger = \OC::$server->getLogger();
+			$logger->debug('The insertion of data is unsuccessful.', array('app' => 'MediaMetadata'));
+		}
+
+		return $result;
 	}
 }

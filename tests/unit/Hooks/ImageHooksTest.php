@@ -45,12 +45,16 @@ class ImageHooksTest extends TestCase {
 	 * @var \PHPUnit_Framework_MockObject_MockObject|\OCA\MediaMetadata\Services\StoreMetadata
 	 */
 	protected $dbManager;
+	/**
+	 * @var $container
+	 */
+	private $container;
 
 	protected function setUp() {
 		parent::setUp();
 
 		$app = new Application();
-		$container = $app->getContainer();
+		$this->container = $app->getContainer();
 
 		$this->root = $this->getMockBuilder('OC\Files\Node\Root')
 			->disableOriginalConstructor()
@@ -79,7 +83,7 @@ class ImageHooksTest extends TestCase {
 			$this->mapper,
 			$this->extractor,
 			$this->dbManager,
-			$container->query('ServerContainer')->getConfig()->getSystemValue('datadirectory')
+			$this->container->query('ServerContainer')->getConfig()->getSystemValue('datadirectory')
 		);
 	}
 
@@ -88,18 +92,16 @@ class ImageHooksTest extends TestCase {
 		$fileId = 260495;
 		$jpgFile = $this->mockJpgFile($location, $fileId);
 
-		$app = new Application();
-		$container = $app->getContainer();
-
-		$absolutePath = $container->query('ServerContainer')->getConfig()->getSystemValue('datadirectory').$location;
+		$absolutePath = $this->container->query('ServerContainer')->getConfig()->getSystemValue('datadirectory').$location;
 
 		$this->assertEquals($jpgFile->getPath(), $location);
 
+		$metadata = null;
+
 		$this->extractor->expects($this->once())
 			->method('extract')
-			->with($absolutePath);
-
-		$metadata = null;
+			->with($absolutePath)
+			->willReturn($metadata);
 
 		$this->dbManager->expects($this->once())
 			->method('store')
@@ -109,7 +111,9 @@ class ImageHooksTest extends TestCase {
 			)
 			->willReturn(true);
 
-		$this->imageHooks->postCreate($jpgFile);
+		$result = $this->imageHooks->postCreate($jpgFile);
+
+		$this->assertEquals($result, true);
 	}
 
 	/**
