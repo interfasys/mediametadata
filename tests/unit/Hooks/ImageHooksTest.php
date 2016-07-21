@@ -96,7 +96,10 @@ class ImageHooksTest extends TestCase {
 
 		$this->assertEquals($jpgFile->getPath(), $location);
 
-		$metadata = null;
+		$metadata = array(
+			'imageWidth' => 100,
+			'imageHeight' => 100
+		);
 
 		$this->extractor->expects($this->once())
 			->method('extract')
