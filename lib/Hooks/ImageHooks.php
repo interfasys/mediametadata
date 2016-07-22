@@ -60,11 +60,18 @@ class ImageHooks {
 
 		$metadata = $this->metadataExtractor->extract($absolutePath);
 
-		$result = $this->dbManager->store($metadata, $node);
+		$logger = \OC::$server->getLogger();
 
-		if($result == false) {
-			$logger = \OC::$server->getLogger();
-			$logger->debug('The insertion of data is unsuccessful.', array('app' => 'MediaMetadata'));
+		if($metadata != null && sizeof($metadata) > 0) {
+			$result = $this->dbManager->store($metadata, $node);
+
+			if($result == false) {
+				$logger->debug('The insertion of data is unsuccessful.', array('app' => 'MediaMetadata'));
+			}
+		}
+		else {
+			$logger->debug('No metadata could be extracted', array('app' => 'MediaMetadata'));
+			$result = false;
 		}
 
 		return $result;

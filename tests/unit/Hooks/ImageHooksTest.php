@@ -119,6 +119,30 @@ class ImageHooksTest extends TestCase {
 		$this->assertEquals($result, true);
 	}
 
+	public function testPostCreateWithBadMetadata() {
+		$location = '/testFolder/test.jpg';
+		$fileId = 260495;
+		$jpgFile = $this->mockJpgFile($location, $fileId);
+
+		$absolutePath = $this->container->query('ServerContainer')->getConfig()->getSystemValue('datadirectory').$location;
+
+		$this->assertEquals($jpgFile->getPath(), $location);
+
+		$metadata = null;
+
+		$this->extractor->expects($this->once())
+			->method('extract')
+			->with($absolutePath)
+			->willReturn($metadata);
+
+		$this->dbManager->expects($this->never())
+			->method('store');
+
+		$result = $this->imageHooks->postCreate($jpgFile);
+
+		$this->assertEquals($result, false);
+	}
+
 	/**
 	 * @param $fileId
 	 * @return object|\PHPUnit_Framework_MockObject_MockObject
