@@ -143,6 +143,38 @@ class ImageHooksTest extends TestCase {
 		$this->assertEquals($result, false);
 	}
 
+	public function testPostCreateWithDBError() {
+		$location = '/testFolder/test.jpg';
+		$fileId = 260495;
+		$jpgFile = $this->mockJpgFile($location, $fileId);
+
+		$absolutePath = $this->container->query('ServerContainer')->getConfig()->getSystemValue('datadirectory').$location;
+
+		$this->assertEquals($jpgFile->getPath(), $location);
+
+		$metadata = array(
+			'imageWidth' => 100,
+			'imageHeight' => 100
+		);
+
+		$this->extractor->expects($this->once())
+			->method('extract')
+			->with($absolutePath)
+			->willReturn($metadata);
+
+		$this->dbManager->expects($this->once())
+			->method('store')
+			->with(
+				$metadata,
+				$jpgFile
+			)
+			->willReturn(false);
+
+		$result = $this->imageHooks->postCreate($jpgFile);
+
+		$this->assertEquals($result, false);
+	}
+
 	/**
 	 * @param $fileId
 	 * @return object|\PHPUnit_Framework_MockObject_MockObject

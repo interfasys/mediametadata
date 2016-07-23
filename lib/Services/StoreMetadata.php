@@ -43,6 +43,10 @@ class StoreMetadata {
 		//Insert to Database
 		$entity = $this->imageDimensionMapper->insert($imageDimension);
 
+		if($imageDimension->getId() == null) {
+			return false;
+		}
+
 		return true;
 	}
 }

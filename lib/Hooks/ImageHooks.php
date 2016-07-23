@@ -66,7 +66,7 @@ class ImageHooks {
 			$result = $this->dbManager->store($metadata, $node);
 
 			if($result == false) {
-				$logger->debug('The insertion of data is unsuccessful.', array('app' => 'MediaMetadata'));
+				$logger->debug('Metadata could not be inserted', array('app' => 'MediaMetadata'));
 			}
 		}
 		else {
