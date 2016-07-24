@@ -53,12 +53,27 @@ class ImageHooks {
 
 	/**
 	 * @param Node $node
+	 * @return bool
 	 */
 	public function postCreate(Node $node) {
 		$absolutePath = $this->dataDirectory.$node->getPath();
 
 		$metadata = $this->metadataExtractor->extract($absolutePath);
 
-		$result = $this->dbManager->store($metadata, $node);
+		$logger = \OC::$server->getLogger();
+
+		if($metadata != null && sizeof($metadata) > 0) {
+			$result = $this->dbManager->store($metadata, $node);
+
+			if($result == false) {
+				$logger->debug('Metadata could not be inserted', array('app' => 'MediaMetadata'));
+			}
+		}
+		else {
+			$logger->debug('No metadata could be extracted', array('app' => 'MediaMetadata'));
+			$result = false;
+		}
+
+		return $result;
 	}
 }
