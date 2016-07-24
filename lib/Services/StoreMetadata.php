@@ -40,10 +40,27 @@ class StoreMetadata {
 			$imageDimension->setImageWidth($metadata['imageWidth']);
 		}
 
+		//EXIF Data
+		//Date Created
+		if(array_key_exists('EXIFData', $metadata) && array_key_exists('dateCreated', $metadata['EXIFData'])) {
+			$imageDimension->setDateCreated($metadata['EXIFData']['dateCreated']);
+		}
+
+		//GPS Latitude
+		if(array_key_exists('EXIFData', $metadata) && array_key_exists('gpsLatitude', $metadata['EXIFData'])) {
+			$imageDimension->setGpsLatitude($metadata['EXIFData']['gpsLatitude']);
+		}
+
+		//GPS Longitude
+		if(array_key_exists('EXIFData', $metadata) && array_key_exists('gpsLongitude', $metadata['EXIFData'])) {
+			$imageDimension->setGpsLongitude($metadata['EXIFData']['gpsLongitude']);
+		}
+
+
 		//Insert to Database
 		$entity = $this->imageDimensionMapper->insert($imageDimension);
 
-		if($imageDimension->getId() == null) {
+		if($entity->getId() == null) {
 			return false;
 		}
 
