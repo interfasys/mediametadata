@@ -69,7 +69,7 @@
 			</field>
 
 			<index>
-				<name>image_size_id_index</name>
+				<name>idx_id</name>
 				<unique>true</unique>
 				<field>
 					<name>image_id</name>

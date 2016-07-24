@@ -18,9 +18,9 @@
     "source": "https://github.com/interfasys/mediametadata"
   },
   "require-dev": {
-    "guzzlehttp/guzzle": "^5.0|^6.0",
-    "phpunit/phpunit": "^4.0|^5.1",
-    "codeception/codeception": "2.1.*",
+    "guzzlehttp/guzzle": "^5.0|^6.2",
+    "phpunit/phpunit": "^4.0|^5.4",
+    "codeception/codeception": "2.2.*",
     "codeception/phpbuiltinserver": "*",
     "composer-plugin-api": "^1.0",
     "codeception/c3": "2.*",

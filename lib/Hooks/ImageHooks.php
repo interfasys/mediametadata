@@ -13,31 +13,39 @@ namespace OCA\MediaMetadata\Hooks;
 
 
 use OC\Files\Node\Root;
+use OCA\MediaMetadata\Services\ExtractMetadata;
 use OCA\MediaMetadata\Services\ImageDimension;
 use OCA\MediaMetadata\Services\ImageDimensionMapper;
+use OCA\MediaMetadata\Services\StoreMetadata;
 use OCP\Files\Node;
 
 class ImageHooks {
 	protected $root;
 	protected $mapper;
 	protected $dataDirectory;
+	protected $metadataExtractor;
+	protected $dbManager;
 
 	/**
 	 * @param Root $root
 	 * @param ImageDimensionMapper $mapper
-	 * @param $datadirectory
+	 * @param ExtractMetadata $metadataExtractor
+	 * @param StoreMetadata $dbManager
+	 * @param $dataDirectory
 	 */
-	public function __construct(Root $root, ImageDimensionMapper $mapper, $dataDirectory) {
+	public function __construct(Root $root, ImageDimensionMapper $mapper, ExtractMetadata $metadataExtractor, StoreMetadata $dbManager, $dataDirectory) {
 		$this->root = $root;
 		$this->mapper = $mapper;
 		$this->dataDirectory = $dataDirectory;
+		$this->metadataExtractor = $metadataExtractor;
+		$this->dbManager = $dbManager;
 	}
 
 	public function register() {
 		$reference = $this;
 
 		$callback = function (Node $node) use($reference) {
-			$reference->post_create($node);
+			$reference->postCreate($node);
 		};
 
 		$this->root->listen('\OC\Files', 'postCreate', $callback);
@@ -45,27 +53,27 @@ class ImageHooks {
 
 	/**
 	 * @param Node $node
+	 * @return bool
 	 */
-	public function post_create(Node $node) {
+	public function postCreate(Node $node) {
 		$absolutePath = $this->dataDirectory.$node->getPath();
 
-		$dimensions = getimagesize($absolutePath);
+		$metadata = $this->metadataExtractor->extract($absolutePath);
 
 		$logger = \OC::$server->getLogger();
-		$logger->log('debug', 'Image Path: '.$absolutePath, array('app' => 'MediaMetadata'));
 
-		if ($dimensions !== false) {
-			list($image_width, $image_height) = $dimensions;
+		if($metadata != null && sizeof($metadata) > 0) {
+			$result = $this->dbManager->store($metadata, $node);
 
-			$logger->log('debug', 'Image Height: '.$image_height, array('app' => 'MediaMetadata'));
-			$logger->log('debug', 'Image Width: '.$image_width, array('app' => 'MediaMetadata'));
-
-			$imageDimension = new ImageDimension();
-			$imageDimension->setImageId($node->getId());
-			$imageDimension->setImageHeight($image_height);
-			$imageDimension->setImageWidth($image_width);
-
-			$this->mapper->insert($imageDimension);
+			if($result == false) {
+				$logger->debug('Metadata could not be inserted', array('app' => 'MediaMetadata'));
+			}
 		}
+		else {
+			$logger->debug('No metadata could be extracted', array('app' => 'MediaMetadata'));
+			$result = false;
+		}
+
+		return $result;
 	}
 }
