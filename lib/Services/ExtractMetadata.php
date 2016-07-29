@@ -47,13 +47,13 @@ class ExtractMetadata {
 		$dimensions = getimagesize($absoluteImagePath);
 
 		$logger = \OC::$server->getLogger();
-		$logger->log('debug', 'Image Path: {absolutePath}', array('app' => 'MediaMetadata', 'absolutePath' => $absoluteImagePath));
+		$logger->debug('Image Path: {absolutePath}', array('app' => 'MediaMetadata', 'absolutePath' => $absoluteImagePath));
 
 		if ($dimensions !== false) {
 			list($image_width, $image_height) = $dimensions;
 
-			$logger->log('debug', 'Image Height: {image_height}', array('app' => 'MediaMetadata', 'image_height' => $image_height));
-			$logger->log('debug', 'Image Width: {image_width}', array('app' => 'MediaMetadata', 'image_width' => $image_width));
+			$logger->debug('Image Height: {image_height}', array('app' => 'MediaMetadata', 'image_height' => $image_height));
+			$logger->debug('Image Width: {image_width}', array('app' => 'MediaMetadata', 'image_width' => $image_width));
 		}
 
 		return $dimensions;
