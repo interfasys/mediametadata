@@ -14,6 +14,16 @@ namespace OCA\MediaMetadata\Services;
 
 use OCA\MediaMetadata\AppInfo\Application;
 use OCA\MediaMetadata\Tests\TestCase;
+use OCP\AppFramework\Db\Entity;
+
+class ImageDimension extends Entity {
+	protected $imageId;
+	protected $imageHeight;
+	protected $imageWidth;
+	protected $dateCreated;
+	protected $gpsLatitude;
+	protected $gpsLongitude;
+}
 
 /**
  * Class StoreMetadataTest
@@ -29,6 +39,10 @@ class StoreMetadataTest extends TestCase {
 	 * @var \PHPUnit_Framework_MockObject_MockObject|\OCA\MediaMetadata\Services\ImageDimensionMapper
 	 */
 	protected $mapper;
+	/**
+	 * @var \PHPUnit_Framework_MockObject_MockObject|\OCA\MediaMetadata\Services\ImageDimension
+	 */
+	protected $imageDimensionEntity;
 	/**
 	 * @var \PHPUnit_Framework_MockObject_MockObject|\OCA\MediaMetadata\Services\StoreMetadata
 	 */
@@ -52,6 +66,7 @@ class StoreMetadataTest extends TestCase {
 			'\OCP\IDBConnection')
 			->disableOriginalConstructor()
 			->getMock();
+		$this->imageDimensionEntity = new ImageDimension();
 		$this->mapper = $this->getMockBuilder(
 			'OCA\MediaMetadata\Services\ImageDimensionMapper')
 			->setConstructorArgs([
@@ -73,9 +88,33 @@ class StoreMetadataTest extends TestCase {
 		$location = '/testFolder/test.jpg';
 		$fileId = 260495;
 		$jpgFile = $this->mockJpgFile($location, $fileId);
+		$metadata = array(
+			'imageHeight'=> 100,
+			'imageWidth' => 100,
+			'EXIFData'   => array('dateCreated' => '26/04/95')
+			);
 
 		$absolutePath = $this->container->query('ServerContainer')->getConfig()->getSystemValue('datadirectory').$location;
-		
+
+		$this->assertEquals($jpgFile->getId(), $fileId);
+		$this->imageDimensionEntity->setImageId($jpgFile->getId());
+		$this->assertContains('id', $this->imageDimensionEntity->getUpdatedFields());
+		$this->imageDimensionEntity->setImageWidth($metadata['imageWidth']);
+		$this->assertContains('imageWidth', $this->imageDimensionEntity->getUpdatedFields());
+		$this->imageDimensionEntity->setImageHeight($metadata['imageHeight']);
+		$this->assertContains('imageHeight', $this->imageDimensionEntity->getUpdatedFields());
+		$this->imageDimensionEntity->setDateCreated($metadata['EXIFData']['dateCreated']);
+		$this->assertContains('dateCreated', $this->imageDimensionEntity->getUpdatedFields());
+
+		$entity = new ImageDimension();
+		$entity->setId(1);
+
+		$this->mapper->expects($this->once())
+			->method('insert')
+			->with($this->imageDimensionEntity)
+			->willReturn($entity);
+
+		$this->assertEquals($this->storeMetadata->store($metadata, $jpgFile), true);
 	}
 
 	/**
