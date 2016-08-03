@@ -117,6 +117,38 @@ class StoreMetadataTest extends TestCase {
 		$this->assertEquals($this->storeMetadata->store($metadata, $jpgFile), true);
 	}
 
+	public function testStoreWithError() {
+		$location = '/testFolder/test.jpg';
+		$fileId = 260495;
+		$jpgFile = $this->mockJpgFile($location, $fileId);
+		$metadata = array(
+			'imageHeight'=> 100,
+			'imageWidth' => 100,
+			'EXIFData'   => array('dateCreated' => '26/04/95')
+		);
+
+		$absolutePath = $this->container->query('ServerContainer')->getConfig()->getSystemValue('datadirectory').$location;
+
+		$this->assertEquals($jpgFile->getId(), $fileId);
+		$this->imageDimensionEntity->setImageId($jpgFile->getId());
+		$this->assertContains('id', $this->imageDimensionEntity->getUpdatedFields());
+		$this->imageDimensionEntity->setImageWidth($metadata['imageWidth']);
+		$this->assertContains('imageWidth', $this->imageDimensionEntity->getUpdatedFields());
+		$this->imageDimensionEntity->setImageHeight($metadata['imageHeight']);
+		$this->assertContains('imageHeight', $this->imageDimensionEntity->getUpdatedFields());
+		$this->imageDimensionEntity->setDateCreated($metadata['EXIFData']['dateCreated']);
+		$this->assertContains('dateCreated', $this->imageDimensionEntity->getUpdatedFields());
+
+		$entity = new ImageDimension();
+
+		$this->mapper->expects($this->once())
+			->method('insert')
+			->with($this->imageDimensionEntity)
+			->willReturn($entity);
+
+		$this->assertEquals($this->storeMetadata->store($metadata, $jpgFile), false);
+	}
+
 	/**
 	 * @param $fileId
 	 * @return object|\PHPUnit_Framework_MockObject_MockObject
