@@ -40,6 +40,12 @@ class StoreMetadata {
 			$imageDimension->setImageWidth($metadata['imageWidth']);
 		}
 
+		// IPTC Data
+		// Date Created
+		if(array_key_exists('IPTCData', $metadata) && array_key_exists('dateCreated', $metadata['IPTCData'])) {
+			$imageDimension->setDateCreated($metadata['IPTCData']['dateCreated']);
+		}
+
 		//Insert to Database
 		$entity = $this->imageDimensionMapper->insert($imageDimension);
 
