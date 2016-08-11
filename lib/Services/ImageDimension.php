@@ -19,6 +19,9 @@ class ImageDimension extends Entity implements JsonSerializable {
 	protected $imageId;
 	protected $imageHeight;
 	protected $imageWidth;
+	protected $dateCreated;
+	protected $gpsLatitude;
+	protected $gpsLongitude;
 
 	/**
 	 * @return array
@@ -28,7 +31,10 @@ class ImageDimension extends Entity implements JsonSerializable {
 			'id' => $this->id,
 			'imageId' => $this->imageId,
 			'imageHeight' => $this->imageHeight,
-			'imageWidth' => $this->imageWidth
+			'imageWidth' => $this->imageWidth,
+			'dateCreated' => $this->dateCreated,
+			'gpsLatitude' => $this->gpsLatitude,
+			'gpsLongitude' => $this->gpsLongitude
 		];
 	}
 }
