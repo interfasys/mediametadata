@@ -43,7 +43,7 @@ class ExtractMetadataTest extends TestCase {
 	/**
 	 * @var $dimensions
 	 */
-	public static $dimensions = null;
+	public static $dimensions = [100, 100];
 	/**
 	 * @var $exif
 	 */
@@ -68,20 +68,14 @@ class ExtractMetadataTest extends TestCase {
 
 		$absolutePath = $this->container->query('ServerContainer')->getConfig()->getSystemValue('datadirectory').$location;
 
-		$dimensions = [100, 100];
+		$width = 100;
+		$height = 100;
 
-		$this->extractor->expects($this->once())
-			->method('extractImageDimensions')
-			->with($absolutePath)
-			->willReturn($dimensions);
+		$metadata = array();
+		$metadata['imageWidth'] = $width;
+		$metadata['imageHeight'] = $height;
+		$metadata['EXIFData'] = false;
 
-//		$exif = array();
-//
-//		$this->extractor->expects($this->once())
-//			->method('extractEXIFMetadata')
-//			->with($absolutePath)
-//			->willReturn($exif);
-
-		$this->extractMetadata->extract($absolutePath);
+		$this->assertEquals($this->extractMetadata->extract($absolutePath), $metadata);
 	}
 }

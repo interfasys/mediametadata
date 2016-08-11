@@ -43,7 +43,7 @@ class ExtractMetadata {
 	 * @param $absoluteImagePath
 	 * @return array
 	 */
-	public function extractImageDimensions($absoluteImagePath) {
+	private function extractImageDimensions($absoluteImagePath) {
 		$dimensions = getimagesize($absoluteImagePath);
 
 		$logger = \OC::$server->getLogger();
