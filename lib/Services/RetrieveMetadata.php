@@ -25,6 +25,10 @@ class RetrieveMetadata {
 		$this->dbConnection = $connection;
 	}
 
+	/**
+	 * @param $fileList : List of File IDs
+	 * @return array
+	 */
 	public function retrieve($fileList) {
 
 		$retrievedData = array();
@@ -32,10 +36,10 @@ class RetrieveMetadata {
 
 		$logger = \OC::$server->getLogger();
 
-		foreach ($fileList as $file) {
-			$entity = $mapper->find($file);
+		foreach ($fileList as $fileID) {
+			$entity = $mapper->find($fileID);
 
-			$retrievedData[''.$file] = array(
+			$retrievedData[strval($fileID)] = array(
 				'imageHeight' => $entity->getImageHeight(),
 				'imageWidth'  => $entity->getImageWidth(),
 				'dateCreated' => $entity->getDateCreated(),
@@ -43,7 +47,7 @@ class RetrieveMetadata {
 				'gpsLatitude' => $entity->getGpsLatitude()
 			);
 
-			$logger->debug('Image Height: {height}', array('app' => 'MediaMetadata', 'height' => $retrievedData[''.$file]));
+			$logger->debug('Image Height: {height}', array('app' => 'MediaMetadata', 'height' => $retrievedData[strval($fileID)]));
 		}
 
 		return $retrievedData;
