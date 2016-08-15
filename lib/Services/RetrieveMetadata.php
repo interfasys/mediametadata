@@ -14,6 +14,11 @@ namespace OCA\MediaMetadata\Services;
 
 use OCP\IDBConnection;
 
+/**
+ * Class RetrieveMetadata
+ *
+ * @package OCA\MediaMetadata\Services
+ */
 class RetrieveMetadata {
 
 	protected $dbConnection;
@@ -21,7 +26,7 @@ class RetrieveMetadata {
 	/**
 	 * @param IDBConnection $connection
 	 */
-	public function __contruct(IDBConnection $connection){
+	public function __construct(IDBConnection $connection){
 		$this->dbConnection = $connection;
 	}
 
