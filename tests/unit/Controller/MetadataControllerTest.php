@@ -11,9 +11,9 @@
 
 namespace OCA\MediaMetadata\Controller;
 
-use \OCA\MediaMetadata\Tests\MapperTestUtility;
+use OCA\MediaMetadata\Tests\TestCase;
 
-class MetadataControllerTest extends MapperTestUtility {
+class MetadataControllerTest extends TestCase {
 	/**
 	 * @var string
 	 */
@@ -39,9 +39,7 @@ class MetadataControllerTest extends MapperTestUtility {
 			->getMock();
 
 		$this->retrieveMetadata = $this->getMockBuilder('\OCA\MediaMetadata\Services\RetrieveMetadata')
-			->setConstructorArgs([
-				$this->db
-			])
+			->disableOriginalConstructor()
 			->getMock();
 
 		$this->controller = new MetadataController(
@@ -62,18 +60,12 @@ class MetadataControllerTest extends MapperTestUtility {
 			)
 		);
 
-		$imageID = 260495;
-		$sql = 'SELECT * FROM *PREFIX*mediametadata WHERE image_id = ?';
-		$params = [$imageID];
-		$row = [
-			'image_height' => 100,
-			'image_width' => 100,
-			'date_created' => '2016-04-29',
-			'gps_latitude' => 27.31,
-			'gps_longitude' => 78.21
-		];
+		$fileList = array(260495);
 
-		$this->setMapperResult($sql, $params, [$row]);
+		$this->retrieveMetadata->expects($this->once())
+			->method('retrieve')
+			->with($fileList)
+			->willReturn($expectedResult);
 
 		$fileIDs = '260495';
 
