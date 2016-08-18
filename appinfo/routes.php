@@ -19,7 +19,14 @@
  */
 return [
     'routes' => [
-	   ['name' => 'page#index', 'url' => '/', 'verb' => 'GET'],
-	   ['name' => 'page#do_echo', 'url' => '/echo', 'verb' => 'POST'],
+		/**
+		 * Services
+		 */
+		//Retrieve Metadata of a list of files
+		[
+			'name' => 'metadata#get_metadata',
+			'url'  => '/metadata/{fileList}',
+			'verb' => 'GET'
+		],
     ]
 ];
