@@ -29,6 +29,8 @@ class MetadataController extends Controller {
 	protected $retrievalService;
 
 	/**
+	 * @param string $AppName
+	 * @param IRequest $request
 	 * @param RetrieveMetadata $retrieveMetadata
 	 */
 	public function __construct(
@@ -43,13 +45,13 @@ class MetadataController extends Controller {
 
 	/**
 	 * @NoAdminRequired
-	 * 
+	 *
 	 * @param $fileIDs
 	 * @return array
 	 */
 	public function getMetadata($fileIDs) {
 
-		$fileList = explode(';', $fileIDs);
+		$fileList = array_map('intval', explode(';', $fileIDs));
 
 		$metadata = $this->retrievalService->retrieve($fileList);
 
