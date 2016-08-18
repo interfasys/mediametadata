@@ -13,14 +13,15 @@ namespace OCA\MediaMetadata\Controller;
 
 
 use OCA\MediaMetadata\Services\RetrieveMetadata;
-use OCP\AppFramework\ApiController;
+use OCP\AppFramework\Controller;
+use OCP\IRequest;
 
 /**
- * Class RetrieveMetadataApiController
+ * Class MetadataController
  *
  * @package OCA\MediaMetadata\Controller
  */
-class RetrieveMetadataApiController extends ApiController {
+class MetadataController extends Controller {
 
 	/**
 	 * @var RetrieveMetadata
@@ -30,7 +31,13 @@ class RetrieveMetadataApiController extends ApiController {
 	/**
 	 * @param RetrieveMetadata $retrieveMetadata
 	 */
-	public function __construct(RetrieveMetadata $retrieveMetadata) {
+	public function __construct(
+		$AppName,
+		IRequest $request,
+		RetrieveMetadata $retrieveMetadata
+	) {
+		parent::__construct($AppName, $request);
+
 		$this->retrievalService = $retrieveMetadata;
 	}
 
