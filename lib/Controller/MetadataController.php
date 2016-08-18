@@ -43,11 +43,14 @@ class MetadataController extends Controller {
 
 	/**
 	 * @NoAdminRequired
-	 *
-	 * @param $fileList
+	 * 
+	 * @param $fileIDs
 	 * @return array
 	 */
-	public function getMetadata($fileList) {
+	public function getMetadata($fileIDs) {
+
+		$fileList = explode(';', $fileIDs);
+
 		$metadata = $this->retrievalService->retrieve($fileList);
 
 		return $metadata;
