@@ -1,52 +1,29 @@
 # Media Metadata
-Place this app in **owncloud/apps/**
+---
 
-## Building the app
+## Description
+An ownCloud Application, which provides CRUD access to the metadata stored in the images. 
+Images can contain extra information embedded in the header. The goal is to extract that information at upload time and to store it in the database so that it can be used later.
 
-The app can be built by using the provided Makefile by running:
+The three main types of metadata extracted in this application are as follows:
 
-    make
+- EXIF Metadata
+- IPTC Metadata [To be merged soon]
+- XMP Metadata [To be merged soon]
 
-This requires the following things to be present:
-* make
-* which
-* tar: for building the archive
-* curl: used if phpunit and composer are not installed to fetch them from the web
-* npm: for building and testing everything JS, only required if a package.json is placed inside the **js/** folder
+The major fields of metadata that are concentrated on are:
 
-The make command will install or update Composer dependencies if a composer.json is present and also **npm run build** if a package.json is present in the **js/** folder. The npm **build** script should use local paths for build systems and package managers, so people that simply want to build the app won't need to install npm libraries globally, e.g.:
+- Date and Time
+- GPS Location and Coordinates
+- Image Width and Image Height
+- Image Orientation
+- Camera Make
+- Camera Model
+- Image Description
+- Creator
+- User Comments
 
-**package.json**:
-```json
-"scripts": {
-    "test": "node node_modules/gulp-cli/bin/gulp.js karma",
-    "prebuild": "npm install && node_modules/bower/bin/bower install && node_modules/bower/bin/bower update",
-    "build": "node node_modules/gulp-cli/bin/gulp.js"
-}
-```
+## Maintainers
 
-
-## Publish to App Store
-
-First get an account for the [App Store](http://apps.owncloud.com/) then run:
-
-    make appstore
-
-The archive is located in build/artifacts/appstore and can then be uploaded to the App Store.
-
-## Running tests
-You can use the provided Makefile to run all tests by using:
-
-    make test
-
-This will run the PHP unit and integration tests and if a package.json is present in the **js/** folder will execute **npm run test**
-
-Of course you can also install [PHPUnit](http://phpunit.de/getting-started.html) and use the configurations directly:
-
-    phpunit -c phpunit.xml
-
-or:
-
-    phpunit -c phpunit.integration.xml
-
-for integration tests
+- [Jalpreet Singh Nanda](https://github.com/imjalpreet)
+- [Olivier Paroz](https://github.com/oparoz)
