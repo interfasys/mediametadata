@@ -2,14 +2,14 @@
 ---
 
 ## Description
-A Cloud Application, which provides CRUD access to the metadata stored in the images. 
-Images can contain extra information embedded in the header. The goal is to extract that information at upload time and to store it in the database so that it can be used later.
+A Cloud Application, which provides CRUD access to the metadata stored in media files. 
+Images can contain extra information embedded in their header. The goal of this app is to extract that information at upload time and to store it in the database so that it can be used later.
 
 The three main types of metadata extracted in this application are as follows:
 
 - EXIF Metadata
-- IPTC Metadata [To be merged soon]
-- XMP Metadata [To be merged soon]
+- IPTC Metadata [Not Implemented Yet]
+- XMP Metadata [Not Implemented Yet]
 
 Here is the list of fields that we are currently or intend on extracting:
 
