@@ -9,8 +9,6 @@
 namespace OCA\MediaMetadata\Services;
 
 
-use Symfony\Component\Config\Definition\Exception\Exception;
-
 class ExtractMetadata {
 
 	public function __construct() {}
@@ -46,14 +44,14 @@ class ExtractMetadata {
 	 * @return array
 	 */
 	private function extractImageDimensions($absoluteImagePath) {
-		try {
-			$dimensions = getimagesize($absoluteImagePath);
-		} catch (Exception 	$e) {
-			$dimensions = false;
-		}
-
 		$logger = \OC::$server->getLogger();
 		$logger->debug('Image Path: {absolutePath}', array('app' => 'MediaMetadata', 'absolutePath' => $absoluteImagePath));
+
+		try {
+			$dimensions = getimagesize($absoluteImagePath);
+		} catch (\PHPUnit_Framework_Exception $e) {
+			$dimensions = false;
+		}
 
 		if ($dimensions !== false) {
 			list($image_width, $image_height) = $dimensions;
@@ -70,7 +68,11 @@ class ExtractMetadata {
 	 * @return array|null
 	 */
 	private function extractEXIFMetadata($absoluteImagePath) {
-		$exif = exif_read_data($absoluteImagePath, 0, true);
+		try {
+			$exif = exif_read_data($absoluteImagePath, 0, true);
+		} catch (\PHPUnit_Framework_Exception $e) {
+			$exif = false;
+		}
 
 		$logger = \OC::$server->getLogger();
 
