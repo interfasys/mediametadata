@@ -4,7 +4,7 @@
 
 A cloud application, which provides CRUD access to the metadata stored in media files. 
 
-Images can contain extra information embedded in their header. The goal of this app is to extract that information at upload time and to store it in the database so that it can be used later.
+Images can contain extra information embedded in their header. The goal of this app is to extract that information at upload time and to store it in the database so that it can be used later by other cloud apps.
 
 The three main types of metadata extracted in this application are as follows:
 
@@ -23,6 +23,8 @@ Here is the list of fields that we are currently or intend on extracting:
 - Image Description
 - Creator
 - User Comments
+
+The information can be retrieved by calling a service from within an app or by using the REST API.
 
 ## Maintainers
 
