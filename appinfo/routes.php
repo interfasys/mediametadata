@@ -28,5 +28,13 @@ return [
 			'url'  => '/metadata/{fileList}',
 			'verb' => 'GET'
 		],
+		/**
+		 * API
+		 */
+		[
+			'name' => 'metadata_api#get_metadata',
+			'url'  => '/api/metadata/{fileList}',
+			'verb' => 'GET'
+		],
     ]
 ];

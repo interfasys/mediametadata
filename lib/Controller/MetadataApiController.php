@@ -43,13 +43,15 @@ class MetadataApiController extends ApiController {
 
 	/**
 	 * @NoAdminRequired
+	 * @NoCSRFRequired
+	 * @CORS
 	 *
-	 * @param $fileIDs
+	 * @param string $fileList
 	 * @return array
 	 */
-	public function getMetadata($fileIDs) {
+	public function getMetadata($fileList) {
 
-		$fileList = array_map('intval', explode(';', $fileIDs));
+		$fileList = array_map('intval', explode(';', $fileList));
 
 		$metadata = $this->retrievalService->retrieve($fileList);
 

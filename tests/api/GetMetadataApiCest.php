@@ -43,9 +43,14 @@ class GetMetadataApiCest {
 		$this->getMetadata($I, $params, $id);
 	}
 
+	/**
+	 * @param \Step\Api\User $I
+	 * @param $params
+	 * @param int $id
+	 */
 	private function getMetadata(\Step\Api\User $I, $params, $id) {
 		$I->getUserCredentialsAndUseHttpAuthentication();
-		$params['fileIDs'] = strval($id);
+		$params['fileList'] = strval($id);
 		$I->sendGET($this->apiUrl, $params);
 		$I->seeResponseCodeIs(200);
 		$I->seeResponseIsJson();
