@@ -32,6 +32,12 @@ return [
 		 * API
 		 */
 		[
+			'name'         => 'metadata_api#preflighted_cors', // Valid for all API end points
+			'url'          => '/api/{path}',
+			'verb'         => 'OPTIONS',
+			'requirements' => ['path' => '.+']
+		],
+		[
 			'name' => 'metadata_api#get_metadata',
 			'url'  => '/api/metadata/{fileList}',
 			'verb' => 'GET'

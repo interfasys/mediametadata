@@ -26,7 +26,7 @@ class GetMetadataApiCest {
 	 * @param ApiTester $I
 	 */
 	public function _before(ApiTester $I) {
-		$this->apiUrl = MetadataApp::$URL . 'api/metadata';
+		$this->apiUrl = MetadataApp::$URL . '/api/metadata';
 	}
 
 	public function _after(ApiTester $I) {
