@@ -49,7 +49,7 @@ class ExtractMetadata {
 
 		try {
 			$dimensions = getimagesize($absoluteImagePath);
-		} catch (\PHPUnit_Framework_Exception $e) {
+		} catch (\Exception $e) {
 			$dimensions = false;
 		}
 
@@ -70,7 +70,7 @@ class ExtractMetadata {
 	private function extractEXIFMetadata($absoluteImagePath) {
 		try {
 			$exif = exif_read_data($absoluteImagePath, 0, true);
-		} catch (\PHPUnit_Framework_Exception $e) {
+		} catch (\Exception $e) {
 			$exif = false;
 		}
 

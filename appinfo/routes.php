@@ -25,7 +25,7 @@ return [
 		//Retrieve Metadata of a list of files
 		[
 			'name' => 'metadata#get_metadata',
-			'url'  => '/metadata/{fileList}',
+			'url'  => '/metadata?fileList={fileList}',
 			'verb' => 'GET'
 		],
 		/**
@@ -39,7 +39,7 @@ return [
 		],
 		[
 			'name' => 'metadata_api#get_metadata',
-			'url'  => '/api/metadata/{fileList}',
+			'url'  => '/api/metadata?fileList={fileList}',
 			'verb' => 'GET'
 		],
     ]

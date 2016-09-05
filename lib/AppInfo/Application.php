@@ -12,9 +12,12 @@
 namespace OCA\MediaMetadata\AppInfo;
 
 
+use OCA\MediaMetadata\Controller\MetadataApiController;
+use OCA\MediaMetadata\Controller\MetadataController;
 use OCA\MediaMetadata\Hooks\ImageHooks;
 use OCA\MediaMetadata\Services\ExtractMetadata;
 use OCA\MediaMetadata\Services\ImageDimensionMapper;
+use OCA\MediaMetadata\Services\RetrieveMetadata;
 use OCA\MediaMetadata\Services\StoreMetadata;
 use OCP\AppFramework\App;
 use OCP\IContainer;
@@ -53,6 +56,28 @@ class Application extends App {
 		$container->registerService('StoreMetadata', function(IContainer $Container) {
 			return new StoreMetadata(
 				$Container->query('ImageDimensionMapper')
+			);
+		});
+
+		$container->registerService('RetrieveMetadata', function(IContainer $Container) {
+			return new RetrieveMetadata(
+				$Container->query('ServerContainer')->getDb()
+			);
+		});
+
+		$container->registerService('MetadataController', function(IContainer $container){
+			return new MetadataController(
+				$container->query('AppName'),
+				$container->query('Request'),
+				$container->query('RetrieveMetadata')
+			);
+		});
+
+		$container->registerService('MetadataApiController', function(IContainer $container){
+			return new MetadataApiController(
+				$container->query('AppName'),
+				$container->query('Request'),
+				$container->query('RetrieveMetadata')
 			);
 		});
 	}
