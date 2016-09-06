@@ -44,10 +44,14 @@ class ExtractMetadata {
 	 * @return array
 	 */
 	private function extractImageDimensions($absoluteImagePath) {
-		$dimensions = getimagesize($absoluteImagePath);
-
 		$logger = \OC::$server->getLogger();
 		$logger->debug('Image Path: {absolutePath}', array('app' => 'MediaMetadata', 'absolutePath' => $absoluteImagePath));
+
+		try {
+			$dimensions = getimagesize($absoluteImagePath);
+		} catch (\Exception $e) {
+			$dimensions = false;
+		}
 
 		if ($dimensions !== false) {
 			list($image_width, $image_height) = $dimensions;
@@ -64,7 +68,11 @@ class ExtractMetadata {
 	 * @return array|null
 	 */
 	private function extractEXIFMetadata($absoluteImagePath) {
-		$exif = exif_read_data($absoluteImagePath, 0, true);
+		try {
+			$exif = exif_read_data($absoluteImagePath, 0, true);
+		} catch (\Exception $e) {
+			$exif = false;
+		}
 
 		$logger = \OC::$server->getLogger();
 

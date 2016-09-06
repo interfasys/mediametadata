@@ -24,7 +24,7 @@
 			<field>
 				<name>date_created</name>
 				<type>date</type>
-				<notnull>true</notnull>
+				<notnull>false</notnull>
 				<length>10</length>
 			</field>
 

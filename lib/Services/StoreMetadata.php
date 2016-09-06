@@ -31,32 +31,34 @@ class StoreMetadata {
 
 		//Image ID
 		$imageDimension->setImageId($node->getId());
-		//Image Height
-		if(array_key_exists('imageHeight', $metadata)) {
-			$imageDimension->setImageHeight($metadata['imageHeight']);
-		}
-		//Image Width
-		if(array_key_exists('imageWidth', $metadata)) {
-			$imageDimension->setImageWidth($metadata['imageWidth']);
-		}
+		if (is_array($metadata)) {
+			//Image Height
+			if (array_key_exists('imageHeight', $metadata)) {
+				$imageDimension->setImageHeight($metadata['imageHeight']);
+			}
+			//Image Width
+			if (array_key_exists('imageWidth', $metadata)) {
+				$imageDimension->setImageWidth($metadata['imageWidth']);
+			}
 
-		//EXIF Data
-		//Date Created
-		if(array_key_exists('EXIFData', $metadata) && array_key_exists('dateCreated', $metadata['EXIFData'])) {
-			$imageDimension->setDateCreated($metadata['EXIFData']['dateCreated']);
+			if (array_key_exists('EXIFData', $metadata) && is_array($metadata['EXIFData'])) {
+				//EXIF Data
+				//Date Created
+				if (array_key_exists('EXIFData', $metadata) && array_key_exists('dateCreated', $metadata['EXIFData'])) {
+					$imageDimension->setDateCreated($metadata['EXIFData']['dateCreated']);
+				}
+
+				//GPS Latitude
+				if (array_key_exists('EXIFData', $metadata) && array_key_exists('gpsLatitude', $metadata['EXIFData'])) {
+					$imageDimension->setGpsLatitude($metadata['EXIFData']['gpsLatitude']);
+				}
+
+				//GPS Longitude
+				if (array_key_exists('EXIFData', $metadata) && array_key_exists('gpsLongitude', $metadata['EXIFData'])) {
+					$imageDimension->setGpsLongitude($metadata['EXIFData']['gpsLongitude']);
+				}
+			}
 		}
-
-		//GPS Latitude
-		if(array_key_exists('EXIFData', $metadata) && array_key_exists('gpsLatitude', $metadata['EXIFData'])) {
-			$imageDimension->setGpsLatitude($metadata['EXIFData']['gpsLatitude']);
-		}
-
-		//GPS Longitude
-		if(array_key_exists('EXIFData', $metadata) && array_key_exists('gpsLongitude', $metadata['EXIFData'])) {
-			$imageDimension->setGpsLongitude($metadata['EXIFData']['gpsLongitude']);
-		}
-
-
 		//Insert to Database
 		$entity = $this->imageDimensionMapper->insert($imageDimension);
 

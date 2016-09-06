@@ -1,8 +1,6 @@
 sudo: false
 language: php
 php:
-  - 5.4
-  - 5.5
   - 5.6
   - 7.0
 addons:
@@ -12,7 +10,7 @@ addons:
       - gdb
 env:
   global:
-    - CORE_BRANCH=master
+    - CORE_BRANCH=stable9.1
     - APP_NAME=mediametadata
   matrix:
     - DB=sqlite
@@ -102,13 +100,13 @@ script:
   #  - php vendor/bin/codecept run acceptance --env firefox
   # Unit, integration and api tests, without code coverage
   # - sh -c "if [ '$TRAVIS_PHP_VERSION' != '7.0' ]; then php vendor/bin/codecept run api,integration,unit; fi;"
-  - sh -c "if [ '$TRAVIS_PHP_VERSION' != '7.0' ]; then php vendor/bin/codecept run unit; fi;"
+  - sh -c "if [ '$TRAVIS_PHP_VERSION' != '7.0' ]; then php vendor/bin/codecept run unit,api; fi;"
   # - sh -c "if [ '$TRAVIS_PHP_VERSION' = '7.0' ] && [ '$DB' != 'mysql' ]; then php vendor/bin/codecept run api,integration,unit; fi;"
-  - sh -c "if [ '$TRAVIS_PHP_VERSION' = '7.0' ] && [ '$DB' != 'mysql' ]; then php vendor/bin/codecept run unit; fi;"
+  - sh -c "if [ '$TRAVIS_PHP_VERSION' = '7.0' ] && [ '$DB' != 'mysql' ]; then php vendor/bin/codecept run unit,api; fi;"
 
   # PHP 5.6 ONLY: Unit, integration and api tests with code coverage
   # - sh -c "if [ '$TRAVIS_PHP_VERSION' = '7.0' ] && [ '$DB' = 'mysql' ]; then php vendor/bin/codecept run api,integration,unit --coverage --coverage-xml --coverage-html; fi;"
-  - sh -c "if [ '$TRAVIS_PHP_VERSION' = '7.0' ] && [ '$DB' = 'mysql' ]; then php vendor/bin/codecept run unit; fi;"
+  - sh -c "if [ '$TRAVIS_PHP_VERSION' = '7.0' ] && [ '$DB' = 'mysql' ]; then php vendor/bin/codecept run unit,api; fi;"
   # - sh -c "if [ '$TRAVIS_PHP_VERSION' = '7.0' ] && [ '$DB' = 'mysql' ]; then php vendor/bin/codecept run unit --coverage --coverage-xml --coverage-html; fi;"
   # We can't use phpdbg only as it doesn't work with the webdriver and we can't use it for some tests only as we can't merge html reports
   # - sh -c "if [ '$TRAVIS_PHP_VERSION' = '7.0' ] && [ '$DB' = 'mysql' ]; then phpenv config-rm xdebug.ini; phpdbg -qrr vendor/bin/codecept run api,integration,unit --coverage --coverage-xml --coverage-html; fi;"
@@ -131,10 +129,6 @@ after_failure:
 
 matrix:
   include:
-    - php: 5.4
-      env: DB=mysql
-    - php: 5.4
-      env: DB=pgsql
     - php: 5.6
       env: DB=mysql
     - php: 7.0

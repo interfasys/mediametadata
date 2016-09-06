@@ -11,18 +11,16 @@
 
 namespace OCA\MediaMetadata\Controller;
 
-
 use OCA\MediaMetadata\Services\RetrieveMetadata;
-use OCP\AppFramework\Controller;
+use OCP\AppFramework\ApiController;
 use OCP\IRequest;
 
 /**
- * Class MetadataController
+ * Class MetadataApiController
  *
  * @package OCA\MediaMetadata\Controller
  */
-class MetadataController extends Controller {
-
+class MetadataApiController extends ApiController {
 	/**
 	 * @var RetrieveMetadata
 	 */
@@ -45,8 +43,10 @@ class MetadataController extends Controller {
 
 	/**
 	 * @NoAdminRequired
+	 * @NoCSRFRequired
+	 * @CORS
 	 *
-	 * @param $fileList
+	 * @param string $fileList
 	 * @return array
 	 */
 	public function getMetadata($fileList) {

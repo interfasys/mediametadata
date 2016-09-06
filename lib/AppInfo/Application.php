@@ -12,9 +12,12 @@
 namespace OCA\MediaMetadata\AppInfo;
 
 
+use OCA\MediaMetadata\Controller\MetadataApiController;
+use OCA\MediaMetadata\Controller\MetadataController;
 use OCA\MediaMetadata\Hooks\ImageHooks;
 use OCA\MediaMetadata\Services\ExtractMetadata;
 use OCA\MediaMetadata\Services\ImageDimensionMapper;
+use OCA\MediaMetadata\Services\RetrieveMetadata;
 use OCA\MediaMetadata\Services\StoreMetadata;
 use OCP\AppFramework\App;
 use OCP\IContainer;
