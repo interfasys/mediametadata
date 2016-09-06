@@ -55,7 +55,7 @@ class DataSetup extends \Codeception\Module {
 	 * @var array
 	 */
 	public $filesHierarchy = [
-		'testimage.jpg',
+		'metadata.jpg',
 		'animated.gif',
 		'testimage-corrupt.jpg',
 		'font.ttf',

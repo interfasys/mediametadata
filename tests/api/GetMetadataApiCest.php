@@ -39,7 +39,7 @@ class GetMetadataApiCest {
 		$data = $I->getFilesDataForFolder('');
 		$params = $this->params;
 
-		$id = $data['testimage.jpg']['id'];
+		$id = $data['metadata.jpg']['id'];
 		$this->getMetadata($I, $params, $id);
 	}
 
