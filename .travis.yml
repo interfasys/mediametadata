@@ -10,7 +10,7 @@ addons:
       - gdb
 env:
   global:
-    - CORE_BRANCH=master
+    - CORE_BRANCH=stable9.1
     - APP_NAME=mediametadata
   matrix:
     - DB=sqlite
