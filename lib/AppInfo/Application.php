@@ -58,27 +58,5 @@ class Application extends App {
 				$Container->query('ImageDimensionMapper')
 			);
 		});
-
-		$container->registerService('RetrieveMetadata', function(IContainer $Container) {
-			return new RetrieveMetadata(
-				$Container->query('ServerContainer')->getDb()
-			);
-		});
-
-		$container->registerService('MetadataController', function(IContainer $container){
-			return new MetadataController(
-				$container->query('AppName'),
-				$container->query('Request'),
-				$container->query('RetrieveMetadata')
-			);
-		});
-
-		$container->registerService('MetadataApiController', function(IContainer $container){
-			return new MetadataApiController(
-				$container->query('AppName'),
-				$container->query('Request'),
-				$container->query('RetrieveMetadata')
-			);
-		});
 	}
 }
