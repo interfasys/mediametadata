@@ -129,10 +129,6 @@ after_failure:
 
 matrix:
   include:
-    - php: 5.4
-      env: DB=mysql
-    - php: 5.4
-      env: DB=pgsql
     - php: 5.6
       env: DB=mysql
     - php: 7.0
