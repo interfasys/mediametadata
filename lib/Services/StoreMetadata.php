@@ -1,9 +1,12 @@
 <?php
 /**
- * Created by PhpStorm.
- * User: imjalpreet
- * Date: 17/7/16
- * Time: 1:07 AM
+ * ownCloud - mediametadata
+ *
+ * This file is licensed under the Affero General Public License version 3 or
+ * later. See the COPYING file.
+ *
+ * @author Jalpreet Singh Nanda (:imjalpreet) <jalpreetnanda@gmail.com>
+ * @copyright Jalpreet Singh Nanda (:imjalpreet) 2016
  */
 
 namespace OCA\MediaMetadata\Services;
@@ -56,6 +59,11 @@ class StoreMetadata {
 			$imageDimension->setGpsLongitude($metadata['EXIFData']['gpsLongitude']);
 		}
 
+		// IPTC Data
+		// Date Created
+		if(array_key_exists('IPTCData', $metadata) && array_key_exists('dateCreated', $metadata['IPTCData'])) {
+			$imageDimension->setDateCreated($metadata['IPTCData']['dateCreated']);
+		}
 
 		//Insert to Database
 		$entity = $this->imageDimensionMapper->insert($imageDimension);
