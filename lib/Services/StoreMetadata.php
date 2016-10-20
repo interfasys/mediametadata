@@ -56,6 +56,11 @@ class StoreMetadata {
 			$imageDimension->setGpsLongitude($metadata['EXIFData']['gpsLongitude']);
 		}
 
+		// XMP Data
+		// Date Created
+		if(array_key_exists('XMPData', $metadata) && array_key_exists('Creation Date', $metadata['XMPData'])) {
+			$imageDimension->setDateCreated($metadata['XMPData']['Creation Date']);
+		}
 
 		//Insert to Database
 		$entity = $this->imageDimensionMapper->insert($imageDimension);
